@@ -9,357 +9,322 @@
 <meta property="og:description" content="제가 진행한 프로젝트입니다. 카드를 누르면 프로젝트 상세 내용이 열립니다.">
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --board:#0B1310;      /* solder mask */
-  --board-2:#101B17;
-  --panel:#121E1A;
-  --edge:#1F3129;
-  --edge-2:#2B4338;
-  --silk:#E7EEE9;       /* silkscreen */
-  --silk-2:#A7B8AF;
-  --silk-3:#6E8278;
-  --copper:#D9A441;     /* pads / copper */
-  --copper-dim:#7A5E2A;
-  --led:#3BE38A;        /* status LED */
-  --red:#FF5D5D;
-  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --bg:#F6F7F9; --card:#FFFFFF; --line:#E4E7EB; --line-2:#D3D8DE;
+  --ink:#141A22; --ink-2:#4B5563; --ink-3:#8B95A1;
+  --accent:#2563EB; --accent-soft:#EAF1FE;
   --sans:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{
-  font-family:var(--sans);color:var(--silk);background:var(--board);
-  font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:break-word;
-  background-image:
-    radial-gradient(circle at 1px 1px,rgba(217,164,65,.10) 1px,transparent 1.6px);
-  background-size:24px 24px;
-}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:break-word}
 body.locked{overflow:hidden}
 a{color:inherit}
-.wrap{max-width:1180px;margin:0 auto;padding:0 28px}
+button{font:inherit;color:inherit}
+.wrap{max-width:1200px;margin:0 auto;padding:0 32px}
 
-/* ---------- header ---------- */
-.top{border-bottom:1px solid var(--edge);background:linear-gradient(180deg,rgba(11,19,16,.0),rgba(11,19,16,.9))}
-.status{font-family:var(--mono);font-size:12px;color:var(--silk-3);display:flex;justify-content:space-between;gap:12px;padding:14px 0;border-bottom:1px dashed var(--edge)}
-.status .ok{color:var(--led)}
-.status .led{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--led);box-shadow:0 0 8px var(--led);margin-right:8px;vertical-align:1px;animation:blink 2.4s infinite}
-@keyframes blink{0%,92%{opacity:1}96%{opacity:.25}100%{opacity:1}}
-.hero{padding:76px 0 64px;position:relative}
-.boot{font-family:var(--mono);font-size:13px;color:var(--silk-3);margin-bottom:22px;line-height:1.9}
-.boot b{color:var(--led);font-weight:500}
-.boot i{font-style:normal;color:var(--copper)}
-.hero h1{font-size:clamp(38px,6vw,64px);font-weight:800;letter-spacing:-.035em;line-height:1.12}
-.hero h1 .cur{display:inline-block;width:.5em;height:.9em;background:var(--copper);margin-left:.12em;vertical-align:-.08em;animation:cur 1.1s steps(1) infinite}
-@keyframes cur{50%{opacity:0}}
-.hero p{margin-top:18px;font-size:18px;color:var(--silk-2);max-width:640px}
-.hero p .k{font-family:var(--mono);font-size:.86em;color:var(--copper);border:1px solid var(--copper-dim);padding:1px 7px;border-radius:2px;margin:0 2px}
+/* header */
+header{padding:72px 0 44px}
+.head{display:flex;align-items:flex-start;justify-content:space-between;gap:24px}
+h1{font-size:clamp(30px,4.4vw,44px);font-weight:800;letter-spacing:-.035em;line-height:1.2}
+.sub{margin-top:12px;color:var(--ink-2);font-size:17px}
+.contact{position:relative;flex-shrink:0;margin-top:6px}
+.cbtn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line-2);background:var(--card);padding:9px 16px;border-radius:999px;font-size:14px;font-weight:600;cursor:pointer;transition:border-color .2s,background .2s}
+.cbtn:hover,.cbtn[aria-expanded="true"]{border-color:var(--ink);}
+.cbtn svg{width:16px;height:16px}
+.pop{position:absolute;right:0;top:calc(100% + 10px);width:310px;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 16px 40px rgba(20,26,34,.12);padding:8px;z-index:30;opacity:0;transform:translateY(-6px);pointer-events:none;transition:opacity .18s,transform .18s}
+.pop.on{opacity:1;transform:none;pointer-events:auto}
+.row{display:flex;align-items:center;gap:12px;padding:10px 10px;border-radius:10px}
+.row:hover{background:var(--bg)}
+.row .ic{width:34px;height:34px;border-radius:9px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;flex-shrink:0}
+.row .ic svg{width:17px;height:17px}
+.row .tx{flex:1;min-width:0}
+.row small{display:block;font-size:11.5px;color:var(--ink-3);line-height:1.3}
+.row a{font-size:14.5px;font-weight:600;text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.row a:hover{color:var(--accent)}
+.copy{border:none;background:none;cursor:pointer;color:var(--ink-3);font-size:12px;padding:4px 6px;border-radius:6px}
+.copy:hover{color:var(--ink);background:var(--line)}
 
-/* ---------- section ---------- */
-.projects{padding:56px 0 88px}
-.sh{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--mono);font-size:12.5px;color:var(--silk-3);margin-bottom:22px}
-.sh strong{color:var(--silk);font-size:14px;font-weight:700;letter-spacing:.04em}
-.sh strong::before{content:"// ";color:var(--copper)}
-
-/* ---------- cards ---------- */
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:28px}
-.card{
-  position:relative;font:inherit;color:inherit;text-align:left;cursor:pointer;
-  background:var(--panel);border:1px solid var(--edge-2);border-radius:6px;overflow:hidden;
-  display:flex;flex-direction:column;transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease;
-}
-.card::before{ /* pin header row */
-  content:"";position:absolute;left:18px;right:18px;top:-1px;height:6px;z-index:2;
-  background:radial-gradient(circle,var(--copper) 2px,transparent 2.6px) 0 0/14px 6px repeat-x;opacity:.75;
-}
-.card:hover,.card:focus-visible{transform:translateY(-4px);border-color:var(--copper);box-shadow:0 14px 40px rgba(0,0,0,.45),0 0 0 1px var(--copper-dim);outline:none}
-.cover{aspect-ratio:16/9;background:#08100D;border-bottom:1px solid var(--edge-2);position:relative;overflow:hidden}
+/* cards */
+main{padding-bottom:96px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.card{text-align:left;cursor:pointer;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;transition:transform .22s ease,box-shadow .22s ease,border-color .22s}
+.card:hover,.card:focus-visible{transform:translateY(-4px);box-shadow:0 14px 34px rgba(20,26,34,.10);border-color:var(--line-2);outline:none}
+.cover{aspect-ratio:16/10;border-bottom:1px solid var(--line)}
 .cover svg{width:100%;height:100%;display:block}
-.cover .ref{position:absolute;right:12px;bottom:10px;font-family:var(--mono);font-size:10.5px;color:var(--silk-3);letter-spacing:.08em}
-.card .body{padding:20px 24px 22px;display:flex;flex-direction:column;flex:1}
-.meta{display:flex;flex-wrap:wrap;gap:8px;font-family:var(--mono);font-size:12px}
-.meta span{padding:3px 8px;border:1px solid var(--edge-2);border-radius:2px;color:var(--silk-2)}
-.meta .no{background:var(--copper);border-color:var(--copper);color:#1A1406;font-weight:700}
-.card h3{font-size:21px;font-weight:750;letter-spacing:-.02em;line-height:1.38;margin:14px 0 8px}
-.card .sum{color:var(--silk-2);font-size:15px}
-.skills{list-style:none;display:flex;flex-wrap:wrap;gap:6px;margin-top:18px;padding-top:16px;border-top:1px dashed var(--edge-2)}
-.skills li{font-family:var(--mono);font-size:11.5px;color:var(--led);background:rgba(59,227,138,.07);border:1px solid rgba(59,227,138,.28);padding:3px 8px;border-radius:2px}
-.card .go{margin-top:auto;padding-top:18px;font-family:var(--mono);font-size:12.5px;color:var(--silk-3);display:flex;justify-content:space-between}
-.card .go b{font-weight:700;color:var(--silk-2);transition:color .2s}
-.card:hover .go b{color:var(--copper)}
+.body{padding:20px 22px 22px;display:flex;flex-direction:column;flex:1}
+.meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:12.5px;color:var(--ink-3)}
+.meta .no{font-family:var(--mono);font-weight:700;color:var(--accent)}
+.meta i{width:3px;height:3px;border-radius:50%;background:var(--line-2)}
+.card h3{font-size:18.5px;font-weight:750;letter-spacing:-.02em;line-height:1.42;margin:9px 0 8px}
+.card .sum{font-size:14.5px;color:var(--ink-2);line-height:1.65}
+.skills{list-style:none;display:flex;flex-wrap:wrap;gap:6px;margin-top:auto;padding-top:18px}
+.skills li{font-size:12px;color:var(--ink-2);background:var(--bg);border:1px solid var(--line);padding:3px 9px;border-radius:999px}
 
-footer{border-top:1px solid var(--edge);padding:26px 0 44px;font-family:var(--mono);font-size:12px;color:var(--silk-3)}
-footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
-footer a{text-decoration:none;border-bottom:1px solid var(--edge-2)}
-footer a:hover{color:var(--copper)}
+footer{border-top:1px solid var(--line);padding:24px 0 40px;font-size:13px;color:var(--ink-3)}
 
-/* ---------- detail sheet ---------- */
-.scrim{position:fixed;inset:0;background:rgba(3,6,5,.7);backdrop-filter:blur(2px);opacity:0;pointer-events:none;transition:opacity .3s;z-index:40}
+/* detail */
+.scrim{position:fixed;inset:0;background:rgba(20,26,34,.4);opacity:0;pointer-events:none;transition:opacity .3s;z-index:40}
 .scrim.on{opacity:1;pointer-events:auto}
-.sheet{position:fixed;top:0;right:0;bottom:0;width:min(900px,100%);z-index:50;background:var(--board-2);border-left:1px solid var(--copper-dim);
-  transform:translateX(102%);transition:transform .38s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column}
-.sheet.on{transform:none}
-.sbar{height:52px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 20px;border-bottom:1px solid var(--edge);background:var(--board);font-family:var(--mono);font-size:12px;color:var(--silk-3)}
-.sbar .path{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sbar .path b{color:var(--copper);font-weight:700}
-.btn{font-family:var(--mono);font-size:12px;font-weight:700;border:1px solid var(--edge-2);background:transparent;color:var(--silk);padding:7px 12px;border-radius:3px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
-.btn:hover{border-color:var(--copper);color:var(--copper)}
-.btn.gh{background:var(--copper);border-color:var(--copper);color:#1A1406}
-.btn.gh:hover{background:#F0BA55;color:#1A1406}
+.sheet{position:fixed;top:0;right:0;bottom:0;width:min(860px,100%);background:var(--card);z-index:50;transform:translateX(102%);transition:transform .36s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column}
+.sheet.on{transform:none;box-shadow:-20px 0 50px rgba(20,26,34,.12)}
+.sbar{height:56px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 20px 0 28px;border-bottom:1px solid var(--line)}
+.sbar .path{font-size:13px;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sbar .path b{color:var(--accent);font-family:var(--mono)}
+.ctrl{display:flex;gap:8px;margin-left:auto}
+.btn{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;border:1px solid var(--line-2);background:var(--card);padding:7px 13px;border-radius:999px;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn:hover{border-color:var(--ink)}
+.btn.dark{background:var(--ink);border-color:var(--ink);color:#fff}
+.btn.dark:hover{background:#000}
 .btn svg{width:15px;height:15px;fill:currentColor}
-.sbody{flex:1;overflow-y:auto;overscroll-behavior:contain;scroll-behavior:smooth}
-.dhead{padding:38px 44px 28px}
-.dhead .meta{margin-bottom:14px}
-.dhead h2{font-size:clamp(25px,3.3vw,33px);font-weight:800;letter-spacing:-.03em;line-height:1.28}
-.role{margin-top:22px;border:1px solid var(--edge-2);border-radius:4px;background:var(--panel)}
-.role .lab{font-family:var(--mono);font-size:11.5px;color:var(--copper);padding:9px 16px;border-bottom:1px solid var(--edge);letter-spacing:.06em}
-.role ul{list-style:none;padding:12px 16px 14px}
-.role li{position:relative;padding-left:16px;color:var(--silk);font-size:15.5px;margin:3px 0}
-.role li::before{content:"";position:absolute;left:0;top:.72em;width:6px;height:6px;background:var(--led);border-radius:50%;box-shadow:0 0 6px var(--led)}
-.dhead .actions{margin-top:20px;display:flex;gap:8px;flex-wrap:wrap}
-
-.tabs{position:sticky;top:0;z-index:5;display:flex;gap:0;background:rgba(16,27,23,.96);backdrop-filter:blur(6px);border-top:1px solid var(--edge);border-bottom:1px solid var(--edge);padding:0 44px;overflow-x:auto}
-.tabs a{font-family:var(--mono);font-size:13px;color:var(--silk-3);text-decoration:none;padding:14px 16px 12px;border-bottom:2px solid transparent;white-space:nowrap}
-.tabs a b{color:var(--copper-dim);margin-right:6px;font-weight:700}
-.tabs a:hover{color:var(--silk)}
-.tabs a.on{color:var(--silk);border-bottom-color:var(--copper)}
-.tabs a.on b{color:var(--copper)}
-
-.dsec{padding:40px 44px 8px;scroll-margin-top:52px}
+.sbody{flex:1;overflow-y:auto;overscroll-behavior:contain}
+.dhead{padding:40px 44px 30px}
+.dhead h2{font-size:clamp(24px,3.2vw,31px);font-weight:800;letter-spacing:-.03em;line-height:1.3;margin-top:10px}
+.role{margin-top:22px;background:var(--bg);border-radius:12px;padding:16px 20px}
+.role .lab{font-size:12.5px;font-weight:700;color:var(--ink-3);margin-bottom:6px}
+.role ul{list-style:none}
+.role li{position:relative;padding-left:14px;font-size:15px;margin:3px 0}
+.role li::before{content:"";position:absolute;left:0;top:.7em;width:5px;height:5px;border-radius:50%;background:var(--accent)}
+.dhead .actions{margin-top:18px}
+.tabs{position:sticky;top:0;z-index:5;display:flex;background:rgba(255,255,255,.95);backdrop-filter:blur(6px);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:0 30px;overflow-x:auto}
+.tabs a{font-size:14px;font-weight:600;color:var(--ink-3);text-decoration:none;padding:14px 14px 12px;border-bottom:2px solid transparent;white-space:nowrap}
+.tabs a b{font-family:var(--mono);font-weight:700;margin-right:6px}
+.tabs a:hover{color:var(--ink)}
+.tabs a.on{color:var(--ink);border-bottom-color:var(--accent)}
+.tabs a.on b{color:var(--accent)}
+.dsec{padding:40px 44px 8px}
 .dsec:last-of-type{padding-bottom:40px}
-.dsec>h3{display:flex;align-items:center;gap:12px;font-size:21px;font-weight:800;letter-spacing:-.02em;margin-bottom:18px}
-.dsec>h3 .n{font-family:var(--mono);font-size:12px;color:#1A1406;background:var(--copper);padding:3px 8px;border-radius:2px}
-.dsec>h3::after{content:"";flex:1;height:1px;background:var(--edge)}
-.dsec h4{font-size:16.5px;font-weight:750;margin:26px 0 10px;color:var(--silk)}
-.dsec h4:first-of-type{margin-top:6px}
-.dsec h4 .m{font-family:var(--mono);font-size:12px;color:var(--copper);margin-right:8px}
+.dsec>h3{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:800;letter-spacing:-.02em;margin-bottom:16px}
+.dsec>h3 .n{font-family:var(--mono);font-size:13px;color:var(--accent)}
+.dsec h4{font-size:16px;font-weight:700;margin:26px 0 8px}
+.dsec h4:first-of-type{margin-top:4px}
+.dsec h4 .m{font-family:var(--mono);font-size:12.5px;color:var(--ink-3);margin-right:8px;font-weight:600}
 ul.pts{list-style:none}
-ul.pts li{position:relative;padding-left:20px;margin:7px 0;color:var(--silk-2);font-size:15.5px}
-ul.pts li::before{content:"›";position:absolute;left:4px;top:-1px;color:var(--copper);font-weight:700}
-ul.pts li strong{color:var(--silk);font-weight:650}
-code{font-family:var(--mono);font-size:.86em;color:var(--led);background:rgba(59,227,138,.08);padding:1px 5px;border-radius:2px}
-.kv{display:grid;grid-template-columns:120px 1fr;border:1px solid var(--edge-2);border-radius:4px;overflow:hidden;margin-top:20px}
-.kv div{padding:10px 14px;border-top:1px solid var(--edge);font-size:14.5px}
+ul.pts li{position:relative;padding-left:16px;margin:6px 0;color:var(--ink-2);font-size:15px}
+ul.pts li::before{content:"";position:absolute;left:2px;top:.72em;width:5px;height:1.5px;background:var(--ink-3)}
+ul.pts li strong{color:var(--ink);font-weight:650}
+code{font-family:var(--mono);font-size:.86em;background:var(--bg);border:1px solid var(--line);padding:0 5px;border-radius:4px;color:var(--ink)}
+.kv{display:grid;grid-template-columns:110px 1fr;border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-top:20px}
+.kv div{padding:10px 16px;border-top:1px solid var(--line);font-size:14.5px}
 .kv div:nth-child(-n+2){border-top:none}
-.kv .k{font-family:var(--mono);font-size:12px;color:var(--silk-3);background:var(--panel);border-right:1px solid var(--edge)}
-.kv .v{color:var(--silk-2)}
-.issue{border:1px solid var(--edge-2);border-radius:4px;margin:16px 0;overflow:hidden;background:var(--panel)}
-.issue .q,.issue .a{padding:14px 18px}
-.issue .q{border-bottom:1px dashed var(--edge-2)}
-.issue .tag{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.06em;display:inline-block;margin-bottom:6px}
-.issue .q .tag{color:var(--red)}
-.issue .a .tag{color:var(--led)}
-.issue .q p{color:var(--silk);font-weight:600;font-size:15.5px}
-.issue ul.pts li{font-size:15px}
-.result{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));border:1px solid var(--edge-2);border-radius:4px;overflow:hidden;margin:6px 0 10px}
-.result div{padding:14px 16px;border-right:1px solid var(--edge);background:var(--panel)}
-.result div:last-child{border-right:none}
-.result b{display:block;font-family:var(--mono);font-size:21px;color:var(--led);letter-spacing:-.02em}
-.result small{font-size:13px;color:var(--silk-3)}
-.note{border-left:3px solid var(--copper);background:var(--panel);padding:14px 18px;margin:14px 0;border-radius:0 4px 4px 0}
-.note b{display:block;margin-bottom:4px;color:var(--silk)}
-.note p{color:var(--silk-2);font-size:15px}
-.pager{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:8px 44px 56px}
-.pager button{font:inherit;color:var(--silk);text-align:left;background:var(--panel);border:1px solid var(--edge-2);border-radius:4px;padding:13px 16px;cursor:pointer}
-.pager button:hover{border-color:var(--copper)}
+.kv .k{font-size:13px;font-weight:600;color:var(--ink-3);background:var(--bg)}
+.kv .v{color:var(--ink-2)}
+.issue{border:1px solid var(--line);border-radius:12px;margin:14px 0;overflow:hidden}
+.issue .q{padding:14px 18px;background:var(--bg)}
+.issue .a{padding:12px 18px 14px}
+.issue .tag{font-family:var(--mono);font-size:11.5px;font-weight:700;display:block;margin-bottom:3px}
+.issue .q .tag{color:#DC2626}
+.issue .a .tag{color:#16A34A}
+.issue .q p{font-weight:650;font-size:15.5px}
+.result{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:4px 0 10px}
+.result div{padding:14px 16px;border:1px solid var(--line);border-radius:12px}
+.result b{display:block;font-size:20px;font-weight:800;letter-spacing:-.02em;color:var(--accent)}
+.result small{font-size:13px;color:var(--ink-3)}
+.note{background:var(--bg);border-radius:12px;padding:14px 18px;margin:12px 0}
+.note b{display:block;margin-bottom:3px}
+.note p{color:var(--ink-2);font-size:15px}
+.pager{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:8px 44px 52px}
+.pager button{text-align:left;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 16px;cursor:pointer}
+.pager button:hover{border-color:var(--ink)}
 .pager .nx{text-align:right}
-.pager small{display:block;font-family:var(--mono);font-size:11px;color:var(--silk-3)}
+.pager small{display:block;font-size:12px;color:var(--ink-3)}
 .pager span{font-weight:700;font-size:14px}
 
-@media (max-width:900px){.grid{grid-template-columns:1fr}}
-@media (max-width:600px){
+@media (max-width:1024px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:640px){
   .wrap{padding:0 18px}
-  .hero{padding:52px 0 44px}
-  .status span:last-child{display:none}
+  header{padding:44px 0 30px}
+  .head{flex-direction:column;gap:16px}
+  .contact{margin-top:0}
+  .pop{left:0;right:auto;width:min(310px,calc(100vw - 36px))}
+  .grid{grid-template-columns:1fr}
+  .sbar{padding:0 14px}.sbar .path{display:none}
   .dhead{padding:28px 20px 22px}
-  .tabs{padding:0 8px}
-  .tabs a{padding:13px 10px 11px;font-size:12px}
+  .tabs{padding:0 8px}.tabs a{padding:13px 9px 11px;font-size:13px}
   .dsec{padding:32px 20px 6px}
-  .pager{padding:8px 20px 44px;grid-template-columns:1fr}
-  .kv{grid-template-columns:1fr}
-  .kv .k{border-right:none}
-  .kv div:nth-child(2){border-top:1px solid var(--edge)}
-  .sbar .path{display:none}
-  .sbar .ctrl{margin-left:auto}
+  .pager{padding:8px 20px 40px;grid-template-columns:1fr}
+  .kv{grid-template-columns:1fr}.kv div:nth-child(2){border-top:1px solid var(--line)}
 }
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
-
-<header class="top">
-  <div class="wrap">
-    <div class="status"><span><i class="led"></i>SYS.READY</span><span>BOARD: PORTFOLIO-REV.B &nbsp;|&nbsp; <span class="ok">4 MODULES LOADED</span></span></div>
-    <div class="hero">
-      <div class="boot">
-        <div><b>[ OK ]</b> Initializing portfolio ...</div>
-        <div><b>[ OK ]</b> Mounting <i>/projects</i> (4 entries)</div>
+<header>
+  <div class="wrap head">
+    <div>
+      <h1>이호윤의 포트폴리오</h1>
+      <p class="sub">지금까지 제가 진행한 프로젝트입니다. 아래 카드를 누르면 각 프로젝트의 상세 내용이 열립니다.</p>
+    </div>
+    <div class="contact">
+      <button class="cbtn" id="cbtn" aria-expanded="false" aria-controls="pop">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>Contact
+      </button>
+      <div class="pop" id="pop" role="dialog" aria-label="연락처">
+        <div class="row"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></span>
+          <div class="tx"><small>Phone</small><a href="tel:010-7703-8802">010-7703-8802</a></div><button class="copy" data-copy="010-7703-8802">복사</button></div>
+        <div class="row"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></span>
+          <div class="tx"><small>Email</small><a href="mailto:hylee8808@naver.com">hylee8808@naver.com</a></div><button class="copy" data-copy="hylee8808@naver.com">복사</button></div>
+        <div class="row"><span class="ic"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></span>
+          <div class="tx"><small>GitHub</small><a href="https://github.com/nooyoh" target="_blank" rel="noopener">github.com/nooyoh</a></div><button class="copy" data-copy="https://github.com/nooyoh">복사</button></div>
       </div>
-      <h1>이호윤의 포트폴리오<span class="cur"></span></h1>
-      <p>지금까지 제가 진행한 프로젝트입니다. 아래 <span class="k">카드</span>를 누르면 각 프로젝트의 개요, 설계 및 구현, 트러블슈팅, 리뷰를 담은 상세 내용이 열립니다.</p>
     </div>
   </div>
 </header>
 
-<main class="projects" id="projects">
-  <div class="wrap">
-    <div class="sh"><strong>PROJECTS</strong><span>ls ./projects | wc -l → 4</span></div>
-    <div class="grid" id="cards"></div>
-  </div>
+<main>
+  <div class="wrap"><div class="grid" id="cards"></div></div>
 </main>
-
-<footer>
-  <div class="wrap">
-    <span>LEE HO YUN · PORTFOLIO</span>
-    <a href="https://github.com/nooyoh" target="_blank" rel="noopener">github.com/nooyoh</a>
-  </div>
-</footer>
+<footer><div class="wrap">© 이호윤 · Portfolio</div></footer>
 
 <div class="scrim" id="scrim"></div>
 <aside class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="d-title" aria-hidden="true">
   <div class="sbar">
     <span class="path" id="path"></span>
-    <div class="ctrl" style="display:flex;gap:8px">
-      <a class="btn gh" id="gh-top" target="_blank" rel="noopener"></a>
-      <button class="btn" id="close" aria-label="닫기">ESC ✕</button>
-    </div>
+    <div class="ctrl"><a class="btn" id="gh-top" target="_blank" rel="noopener"></a><button class="btn" id="close" aria-label="닫기">닫기 ✕</button></div>
   </div>
   <div class="sbody" id="sbody"></div>
 </aside>
 
 <script>
-/* ================= COVER ILLUSTRATIONS (SVG) ================= */
-const F = `font-family="JetBrains Mono,Consolas,monospace"`;
-const C = {silk:"#E7EEE9",silk2:"#A7B8AF",dim:"#4E6359",cu:"#D9A441",led:"#3BE38A",red:"#FF5D5D",bg:"#08100D",line:"#22362D"};
-const grid = `<defs><pattern id="g" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" stroke="${C.line}" stroke-width=".6"/></pattern></defs><rect width="640" height="360" fill="${C.bg}"/><rect width="640" height="360" fill="url(#g)" opacity=".55"/>`;
-const box = (x,y,w,h,t,s,col=C.silk)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="#0E1915" stroke="${col}" stroke-width="1.4"/><text x="${x+w/2}" y="${y+h/2-(s?3:-4)}" ${F} font-size="12" font-weight="700" fill="${col}" text-anchor="middle">${t}</text>${s?`<text x="${x+w/2}" y="${y+h/2+13}" ${F} font-size="9.5" fill="${C.silk2}" text-anchor="middle">${s}</text>`:""}`;
-const arrow = (x1,y,x2,lab)=>`<line x1="${x1}" y1="${y}" x2="${x2-6}" y2="${y}" stroke="${C.cu}" stroke-width="1.6"/><path d="M${x2} ${y} l-7 -4 v8z" fill="${C.cu}"/>${lab?`<text x="${(x1+x2)/2}" y="${y-8}" ${F} font-size="9" fill="${C.cu}" text-anchor="middle">${lab}</text>`:""}`;
+/* ============ COVER ILLUSTRATIONS — 결과물 중심, 수치 없음 ============ */
+const INK="#1F2937", SOFT="#CBD5E1", BLUE="#2563EB";
 
 const COVER = {
-/* 01 Robot arm : pipeline + packet + arm + scope */
-arm: ()=>{
-  const bytes=["AA","55","A1","A1","A2","A2","A3","A3","F1","F2","F3","F4","RT","RT","CS"];
-  const pk=bytes.map((b,i)=>{const col=i<2?C.cu:i<8?C.silk:i<12?C.led:i<14?"#F0BA55":C.red;
-    return `<rect x="${32+i*27}" y="212" width="25" height="24" fill="#0E1915" stroke="${col}" stroke-width="1"/><text x="${44.5+i*27}" y="228" ${F} font-size="9.5" fill="${col}" text-anchor="middle">${b}</text>`}).join("");
-  let scope="M32 312";for(let i=0;i<34;i++){const x=32+i*12;scope+=` L${x} 312 L${x+2} ${i%5==2?286:300} L${x+6} 312`}
-  return `<svg viewBox="0 0 640 360" xmlns="http://www.w3.org/2000/svg">${grid}
-  ${box(28,58,92,52,"SENSOR","STM32 · TIM IC")}${arrow(120,84,152,"UART")}
-  ${box(152,58,80,52,"ESP32","BT SPP")}${arrow(232,84,262,"BT")}
-  ${box(262,58,72,52,"PC","IPC")}${arrow(334,84,366,"USB")}
-  ${box(366,58,92,52,"ROBOT","STM32 · PWM")}
-  <path d="M412 110 V150 H74 V116" fill="none" stroke="${C.led}" stroke-width="1.4" stroke-dasharray="5 4"/><path d="M74 110 l-4 8 h8z" fill="${C.led}"/>
-  <text x="243" y="168" ${F} font-size="10" fill="${C.led}" text-anchor="middle">ACK 0x06 → RTT 측정 · E2E ≈ RTT/2</text>
-  <text x="32" y="202" ${F} font-size="9.5" fill="${C.silk2}">15-BYTE PACKET</text>${pk}
-  <text x="32" y="270" ${F} font-size="9.5" fill="${C.silk2}">LATENCY PROBE</text>
-  <path d="${scope}" fill="none" stroke="${C.led}" stroke-width="1.3"/>
-  <g stroke="${C.silk}" stroke-width="3" fill="none" stroke-linecap="round">
-    <path d="M500 316 h96"/><path d="M548 316 v-30"/><path d="M548 286 L520 214"/><path d="M520 214 L590 170"/>
-    <path d="M590 170 l18 -12 M590 170 l20 4" stroke="${C.cu}"/>
+/* 01 로봇팔 — 착용형 센서 팔 ↔ 무선 ↔ 같은 자세의 로봇팔 */
+arm: ()=>`<svg viewBox="0 0 480 300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="480" height="300" fill="#EEF3FB"/>
+  <circle cx="240" cy="150" r="150" fill="#E3EBF8"/>
+  <!-- person wearing sensors -->
+  <circle cx="72" cy="88" r="17" fill="#F2C9A8"/>
+  <path d="M44 236 V136 q0 -24 28 -24 q28 0 28 24 V236z" fill="#334155"/>
+  <rect x="52" y="146" width="28" height="22" rx="3" fill="#fff" stroke="${INK}" stroke-width="2"/>
+  <circle cx="60" cy="157" r="2.6" fill="${BLUE}"/><rect x="66" y="152" width="10" height="10" rx="1" fill="${SOFT}"/>
+  <g stroke-linecap="round" fill="none">
+    <path d="M94 128 L132 176" stroke="#475569" stroke-width="18"/>
+    <path d="M132 176 L176 140" stroke="#F2C9A8" stroke-width="14"/>
   </g>
-  <rect x="528" y="296" width="40" height="20" rx="3" fill="#0E1915" stroke="${C.silk}" stroke-width="1.6"/>
-  ${[[548,286],[520,214],[590,170]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="7" fill="${C.bg}" stroke="${C.cu}" stroke-width="2"/><circle cx="${x}" cy="${y}" r="2" fill="${C.cu}"/>`).join("")}
-  <text x="500" y="340" ${F} font-size="9.5" fill="${C.silk2}">SERVO ×7 · 50Hz PWM</text>
-  </svg>`},
+  <rect x="100" y="140" width="24" height="12" rx="4" transform="rotate(52 112 146)" fill="${BLUE}"/>
+  <rect x="146" y="152" width="22" height="11" rx="4" transform="rotate(-39 157 157)" fill="${BLUE}"/>
+  <circle cx="132" cy="176" r="8" fill="#fff" stroke="${BLUE}" stroke-width="3"/>
+  <g transform="translate(184 134)">
+    <ellipse rx="11" ry="10" fill="#F2C9A8"/>
+    ${[-7,-2,3,8].map(d=>`<path d="M5 ${d} l10 ${-d*.3-2}" stroke="#F2C9A8" stroke-width="4.5" stroke-linecap="round"/><circle cx="15" cy="${d-d*.3-2}" r="2.3" fill="${BLUE}"/>`).join("")}
+  </g>
+  <!-- wireless -->
+  <g fill="none" stroke="${BLUE}" stroke-width="3" stroke-linecap="round">
+    <path d="M222 132 a18 18 0 0 1 0 28" opacity=".45"/><path d="M234 122 a32 32 0 0 1 0 48" opacity=".7"/><path d="M246 112 a46 46 0 0 1 0 68"/>
+  </g>
+  <!-- robot arm mirroring -->
+  <rect x="300" y="226" width="96" height="16" rx="5" fill="${INK}"/>
+  <path d="M322 226 q26 -26 52 0z" fill="#334155"/>
+  <g stroke-linecap="round" fill="none">
+    <path d="M348 208 L362 132" stroke="#3B82F6" stroke-width="20"/>
+    <path d="M362 132 L420 110" stroke="#3B82F6" stroke-width="17"/>
+  </g>
+  <circle cx="348" cy="208" r="12" fill="#fff" stroke="${INK}" stroke-width="3"/>
+  <circle cx="362" cy="132" r="11" fill="#fff" stroke="${INK}" stroke-width="3"/>
+  <circle cx="420" cy="110" r="9" fill="#fff" stroke="${INK}" stroke-width="3"/>
+  <g stroke="${INK}" stroke-width="5" stroke-linecap="round" fill="none">
+    <path d="M428 104 l16 -8 l8 6"/><path d="M430 112 l18 -1 l6 7"/><path d="M428 118 l14 6 l2 8"/>
+  </g>
+</svg>`,
 
-/* 02 Thermal SR : LR grid -> model -> HR heatmap + bbox */
+/* 02 열화상 — 저해상도 열화상 → 고해상도 복원 + 탐지 */
 thermal: ()=>{
-  const pal=["#1B0A3A","#3C0C63","#7A1C6E","#C2385A","#EE6A2E","#F9A825","#FDE68A"];
-  const v=[[0,0,1,1,1,0,0,0],[0,1,2,3,2,1,0,0],[0,1,3,5,4,1,0,1],[0,1,4,6,4,1,1,2],[0,1,3,5,3,1,1,1],[0,0,2,3,2,0,0,0]];
-  let lr="";v.forEach((r,j)=>r.forEach((c,i)=>{lr+=`<rect x="${34+i*17}" y="${70+j*17}" width="17" height="17" fill="${pal[c]}"/>`}));
-  return `<svg viewBox="0 0 640 360" xmlns="http://www.w3.org/2000/svg">${grid}
+  const pal=["#1E1B4B","#3B1C6B","#7A1F6E","#C2385A","#EE6A2E","#F9A825","#FDE68A"];
+  const g=(x,y,cx,cy,sx,sy)=>Math.exp(-(((x-cx)/sx)**2+((y-cy)/sy)**2));
+  const heat=(x,y)=>Math.min(1,0.08+Math.max(g(x,y,0.38,0.62,0.12,0.3),g(x,y,0.38,0.22,0.08,0.1)*0.95,g(x,y,0.8,0.78,0.15,0.09)*0.7));
+  let lr="";const NX=12,NY=9,cw=180/NX,ch=140/NY;
+  for(let j=0;j<NY;j++)for(let i=0;i<NX;i++){const v=heat((i+.5)/NX,(j+.5)/NY);lr+=`<rect x="${34+i*cw}" y="${80+j*ch}" width="${cw+.4}" height="${ch+.4}" fill="${pal[Math.min(6,Math.round(v*6))]}"/>`}
+  return `<svg viewBox="0 0 480 300" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <radialGradient id="hp" cx="50%" cy="45%" r="55%"><stop offset="0" stop-color="#FDE68A"/><stop offset=".25" stop-color="#F9A825"/><stop offset=".5" stop-color="#EE6A2E"/><stop offset=".72" stop-color="#7A1C6E"/><stop offset="1" stop-color="#1B0A3A" stop-opacity="0"/></radialGradient>
-    <linearGradient id="hb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1B0A3A"/><stop offset="1" stop-color="#2A0D4D"/></linearGradient>
+    <filter id="bl" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="7"/></filter>
+    <clipPath id="cp"><rect x="266" y="80" width="180" height="140" rx="10"/></clipPath>
+    <clipPath id="cl"><rect x="34" y="80" width="180" height="140" rx="10"/></clipPath>
   </defs>
-  <text x="34" y="60" ${F} font-size="10" fill="${C.silk2}">THERMAL LR 80×60</text>
-  <rect x="33" y="69" width="138" height="104" fill="none" stroke="${C.silk}" stroke-width="1.2"/>${lr}
-  <text x="34" y="208" ${F} font-size="10" fill="${C.silk2}">VIS HR 640×480</text>
-  <rect x="33" y="216" width="138" height="104" fill="#0E1915" stroke="${C.silk}" stroke-width="1.2"/>
-  <g stroke="${C.silk2}" stroke-width="1" fill="none"><path d="M33 300 L95 262 L171 300"/><path d="M60 300 L95 262 L130 300"/><path d="M48 236 v40 M44 236 h8"/><rect x="96" y="248" width="10" height="26"/><circle cx="101" cy="243" r="5"/><path d="M140 250 h22 v20 h-22z"/></g>
-  <path d="M171 121 H210 V170" fill="none" stroke="${C.cu}" stroke-width="1.6"/><path d="M171 268 H210 V196" fill="none" stroke="${C.cu}" stroke-width="1.6"/>
-  <rect x="200" y="140" width="148" height="86" rx="4" fill="#0E1915" stroke="${C.cu}" stroke-width="1.5"/>
-  ${[0,1,2,3].map(i=>`<rect x="${214+i*10}" y="${152+i*8}" width="7" height="${60-i*16}" fill="${C.silk2}" opacity=".8"/><rect x="${314-i*10}" y="${152+i*8}" width="7" height="${60-i*16}" fill="${C.silk2}" opacity=".8"/>`).join("")}
-  <circle cx="274" cy="198" r="7" fill="none" stroke="${C.cu}" stroke-width="1.5"/><text x="274" y="201" ${F} font-size="8" fill="${C.cu}" text-anchor="middle">M</text>
-  <text x="274" y="246" ${F} font-size="10" fill="${C.cu}" text-anchor="middle" font-weight="700">DUAL-ENCODER U-NET</text>
-  ${arrow(348,183,388,"×8 · SGF")}
-  <text x="392" y="60" ${F} font-size="10" fill="${C.silk2}">SR + SGF → YOLO11n</text>
-  <rect x="392" y="69" width="216" height="162" fill="url(#hb)" stroke="${C.silk}" stroke-width="1.2"/>
-  <ellipse cx="470" cy="150" rx="46" ry="74" fill="url(#hp)"/>
-  <ellipse cx="560" cy="200" rx="36" ry="22" fill="url(#hp)" opacity=".75"/>
-  <rect x="436" y="86" width="70" height="134" fill="none" stroke="${C.led}" stroke-width="1.6"/>
-  <rect x="436" y="74" width="74" height="13" fill="${C.led}"/><text x="440" y="84" ${F} font-size="9" fill="#06120B" font-weight="700">person 0.78</text>
-  <rect x="527" y="182" width="70" height="40" fill="none" stroke="${C.cu}" stroke-width="1.4"/>
-  <text x="392" y="262" ${F} font-size="10" fill="${C.silk2}">mAP@0.5</text>
-  <rect x="392" y="270" width="216" height="8" fill="#0E1915" stroke="${C.dim}"/><rect x="392" y="270" width="53" height="8" fill="${C.dim}"/>
-  <rect x="392" y="288" width="216" height="8" fill="#0E1915" stroke="${C.dim}"/><rect x="392" y="288" width="216" height="8" fill="${C.led}" opacity=".85"/>
-  <text x="392" y="314" ${F} font-size="9" fill="${C.silk2}">baseline 0.114 → SGF 0.466</text>
+  <rect width="480" height="300" fill="#F4EEF6"/>
+  <g clip-path="url(#cl)">${lr}</g>
+  <rect x="34" y="80" width="180" height="140" rx="10" fill="none" stroke="${INK}" stroke-width="2"/>
+  <g transform="translate(240 150)"><circle r="16" fill="#fff" stroke="${INK}" stroke-width="2"/><path d="M-6 0 h12 M2 -5 l5 5 l-5 5" stroke="${INK}" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <g clip-path="url(#cp)">
+    <rect x="266" y="80" width="180" height="140" fill="#1E1B4B"/>
+    <rect x="266" y="176" width="180" height="44" fill="#2A2160"/>
+    <g filter="url(#bl)">
+      <ellipse cx="335" cy="160" rx="18" ry="40" fill="#EE6A2E"/>
+      <circle cx="335" cy="110" r="12" fill="#F9A825"/>
+      <rect x="385" y="168" width="58" height="26" rx="8" fill="#C2385A"/>
+    </g>
+    <g fill="#FDE68A" opacity=".95"><circle cx="335" cy="110" r="8"/><rect x="324" y="122" width="22" height="46" rx="10"/><rect x="326" y="160" width="7" height="40" rx="3"/><rect x="337" y="160" width="7" height="40" rx="3"/></g>
+    <g fill="#F59E0B" opacity=".9"><rect x="388" y="172" width="52" height="18" rx="6"/><circle cx="398" cy="193" r="6" fill="#7A1F6E"/><circle cx="430" cy="193" r="6" fill="#7A1F6E"/></g>
+  </g>
+  <rect x="314" y="94" width="42" height="114" rx="3" fill="none" stroke="#22C55E" stroke-width="2.5"/>
+  <rect x="380" y="162" width="64" height="40" rx="3" fill="none" stroke="#38BDF8" stroke-width="2.5"/>
+  <rect x="266" y="80" width="180" height="140" rx="10" fill="none" stroke="${INK}" stroke-width="2"/>
+  <g fill="${INK}" font-family="Pretendard,sans-serif" font-size="12" font-weight="700"><text x="34" y="244">Low-Res</text><text x="266" y="244">Restored + Detection</text></g>
   </svg>`},
 
-/* 03 Linux driver : layered stack + quadrature + LED bar + fan */
-driver: ()=>{
-  const row=(y,lab,items,col)=>`<text x="30" y="${y+22}" ${F} font-size="10" fill="${C.silk2}">${lab}</text>`+items.map((t,i)=>`<rect x="${106+i*96}" y="${y}" width="88" height="34" rx="3" fill="#0E1915" stroke="${col}" stroke-width="1.2"/><text x="${150+i*96}" y="${y+21}" ${F} font-size="10.5" fill="${col}" text-anchor="middle" font-weight="700">${t}</text>`).join("");
-  let qa="M106 300",qb="M106 330";
-  for(let i=0;i<6;i++){const x=106+i*60;qa+=` H${x+15} V282 H${x+45} V300`;qb+=` H${x+30} V312 H${x+60} V330`;}
-  const leds=[...Array(8)].map((_,i)=>`<rect x="${506+i*14}" y="244" width="10" height="20" rx="1.5" fill="${i<5?C.led:'#13241D'}" stroke="${i<5?C.led:C.dim}" ${i<5?'filter="url(#gl)"':''}/>`).join("");
-  return `<svg viewBox="0 0 640 360" xmlns="http://www.w3.org/2000/svg">${grid}
-  <defs><filter id="gl"><feGaussianBlur stdDeviation="1.6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
-  <rect x="106" y="34" width="376" height="34" rx="3" fill="#0E1915" stroke="${C.cu}" stroke-width="1.4"/>
-  <text x="30" y="56" ${F} font-size="10" fill="${C.silk2}">USER</text>
-  <text x="294" y="55" ${F} font-size="11" fill="${C.cu}" text-anchor="middle" font-weight="700">fan_app · WAIT / AUTO / MANUAL</text>
-  ${["IIO","ioctl","poll","ioctl"].map((t,i)=>`<text x="${150+i*96}" y="86" ${F} font-size="9" fill="${C.silk2}" text-anchor="middle">${i==2?"▲":"▼"} ${t}</text>`).join("")}
-  ${row(96,"KERNEL",["bmp180.ko","motor.ko","ec11.ko","ledbar.ko"],C.silk)}
-  ${[0,1,2,3].map(i=>`<line x1="${150+i*96}" y1="130" x2="${150+i*96}" y2="156" stroke="${C.dim}" stroke-dasharray="3 3"/>`).join("")}
-  ${row(156,"HW",["BMP180","L298N","EC11","LED ×8"],C.silk2)}
-  <text x="30" y="296" ${F} font-size="10" fill="${C.silk2}">S1</text><text x="30" y="326" ${F} font-size="10" fill="${C.silk2}">S2</text>
-  <path d="${qa}" fill="none" stroke="${C.led}" stroke-width="1.5"/><path d="${qb}" fill="none" stroke="${C.cu}" stroke-width="1.5"/>
-  <text x="106" y="266" ${F} font-size="9.5" fill="${C.silk2}">QUADRATURE · IRQ → kfifo → poll()</text>
-  <g transform="translate(562 128)">
-    <circle r="62" fill="none" stroke="${C.dim}" stroke-width="1.2"/>
-    ${[0,120,240].map(a=>`<path transform="rotate(${a})" d="M0 0 C 14 -16 18 -44 4 -54 C -10 -46 -12 -18 0 0z" fill="#16261F" stroke="${C.silk}" stroke-width="1.4"/>`).join("")}
-    <circle r="8" fill="${C.cu}"/>
+/* 03 스마트 선풍기 — 선풍기 + 로터리 노브 + LED 바 + 온도센서 */
+driver: ()=>`<svg viewBox="0 0 480 300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="480" height="300" fill="#EEF7F2"/>
+  <circle cx="150" cy="140" r="122" fill="#E1F0E7"/>
+  <!-- fan -->
+  <rect x="142" y="190" width="16" height="64" rx="5" fill="#94A3B8"/>
+  <ellipse cx="150" cy="258" rx="58" ry="12" fill="#64748B"/>
+  <circle cx="150" cy="128" r="74" fill="#fff" stroke="${INK}" stroke-width="3"/>
+  ${[0,72,144,216,288].map(a=>`<path transform="translate(150 128) rotate(${a})" d="M0 -6 C 18 -20 30 -52 10 -64 C -10 -58 -14 -24 0 -6z" fill="#86EFAC" stroke="#16A34A" stroke-width="1.6"/>`).join("")}
+  ${[24,46,68].map(r=>`<circle cx="150" cy="128" r="${r}" fill="none" stroke="${SOFT}" stroke-width="1" opacity=".55"/>`).join("")}
+  <circle cx="150" cy="128" r="12" fill="${INK}"/>
+  <g stroke="#16A34A" stroke-width="3" fill="none" stroke-linecap="round" opacity=".55">
+    <path d="M234 98 q16 -8 32 0"/><path d="M240 128 q18 -8 36 0"/><path d="M234 158 q16 -8 32 0"/>
   </g>
-  <text x="506" y="236" ${F} font-size="9.5" fill="${C.silk2}">LEDBAR  5/8</text>${leds}
-  <text x="506" y="288" ${F} font-size="9.5" fill="${C.silk2}">AUTO  22→32℃</text>
-  <text x="506" y="302" ${F} font-size="9.5" fill="${C.led}">duty 40→100%</text>
-  </svg>`},
+  <!-- control panel -->
+  <rect x="296" y="62" width="150" height="176" rx="14" fill="#fff" stroke="${INK}" stroke-width="2.5"/>
+  <circle cx="371" cy="118" r="30" fill="#F1F5F9" stroke="${INK}" stroke-width="2.5"/>
+  <circle cx="371" cy="118" r="20" fill="${INK}"/>
+  <line x1="371" y1="118" x2="383" y2="104" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+  ${[...Array(12)].map((_,i)=>{const a=i*30*Math.PI/180;return `<line x1="${371+36*Math.cos(a)}" y1="${118+36*Math.sin(a)}" x2="${371+40*Math.cos(a)}" y2="${118+40*Math.sin(a)}" stroke="${SOFT}" stroke-width="2"/>`}).join("")}
+  ${[...Array(8)].map((_,i)=>`<rect x="${312+i*15.5}" y="172" width="11" height="22" rx="2.5" fill="${i<5?["#22C55E","#22C55E","#84CC16","#EAB308","#F97316"][i]:"#E2E8F0"}"/>`).join("")}
+  <rect x="314" y="208" width="34" height="16" rx="3" fill="#0EA5E9"/><circle cx="322" cy="216" r="3" fill="#fff"/>
+  <g transform="translate(420 206)"><rect x="-4" y="-16" width="8" height="24" rx="4" fill="#fff" stroke="${INK}" stroke-width="2"/><circle cy="12" r="7" fill="#EF4444" stroke="${INK}" stroke-width="2"/><rect x="-1.5" y="-6" width="3" height="14" fill="#EF4444"/></g>
+</svg>`,
 
-/* 04 Silo robot : curved wall + tracked robot + sensors + crack + FSM */
-silo: ()=>{
-  return `<svg viewBox="0 0 640 360" xmlns="http://www.w3.org/2000/svg">${grid}
-  <defs><pattern id="h" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#2C4238" stroke-width="2"/></pattern></defs>
-  <path d="M0 0 H150 Q 92 180 150 360 H0z" fill="url(#h)"/>
-  <path d="M150 0 Q 92 180 150 360" fill="none" stroke="${C.silk}" stroke-width="2.2"/>
-  <text x="14" y="26" ${F} font-size="10" fill="${C.silk2}">STEEL SILO WALL</text>
-  <path d="M40 92 l14 18 l-6 16 l16 22 l-4 18 l12 20" fill="none" stroke="${C.red}" stroke-width="2"/>
-  <path d="M30 86 L70 84 L84 194 L44 196z" fill="${C.red}" opacity=".16" stroke="${C.red}" stroke-dasharray="4 3"/>
-  <rect x="28" y="70" width="74" height="13" fill="${C.red}"/><text x="32" y="80" ${F} font-size="9" fill="#1A0606" font-weight="700">crack 0.755</text>
-  <g transform="translate(132 110)">
-    <rect x="0" y="0" width="16" height="140" rx="8" fill="#16261F" stroke="${C.cu}" stroke-width="1.6"/>
-    ${[12,40,70,100,128].map(y=>`<circle cx="8" cy="${y}" r="5" fill="none" stroke="${C.cu}" stroke-width="1.3"/>`).join("")}
-    <rect x="16" y="14" width="84" height="112" rx="4" fill="#0E1915" stroke="${C.silk}" stroke-width="1.5"/>
-    <text x="58" y="56" ${F} font-size="10" fill="${C.silk}" text-anchor="middle" font-weight="700">STM32</text>
-    <text x="58" y="72" ${F} font-size="9" fill="${C.silk2}" text-anchor="middle">+ IMU</text>
-    <text x="58" y="96" ${F} font-size="9" fill="${C.silk2}" text-anchor="middle">ORIN · YOLO</text>
+/* 04 사일로봇 — 사일로 벽면에 붙은 궤도 로봇이 균열 탐지 */
+silo: ()=>`<svg viewBox="0 0 480 300" xmlns="http://www.w3.org/2000/svg">
+  <defs><linearGradient id="sl" x1="0" x2="1"><stop offset="0" stop-color="#94A3B8"/><stop offset=".45" stop-color="#E2E8F0"/><stop offset="1" stop-color="#94A3B8"/></linearGradient></defs>
+  <rect width="480" height="300" fill="#F5F1EA"/>
+  <rect y="262" width="480" height="38" fill="#E7E0D3"/>
+  <!-- silo -->
+  <path d="M110 70 Q240 20 370 70 V268 H110z" fill="url(#sl)" stroke="${INK}" stroke-width="2.5"/>
+  <path d="M110 70 Q240 104 370 70" fill="none" stroke="${INK}" stroke-width="2" opacity=".5"/>
+  ${[150,195,240,285,330].map(x=>`<line x1="${x}" y1="${80+Math.abs(240-x)*-0.1+ (x<240?-8:-8)}" x2="${x}" y2="268" stroke="#64748B" stroke-width="1" opacity=".45"/>`).join("")}
+  ${[120,170,220].map(y=>`<path d="M110 ${y} Q240 ${y+18} 370 ${y}" fill="none" stroke="#64748B" stroke-width="1" opacity=".45"/>`).join("")}
+  <!-- crack with detection mask -->
+  <path d="M268 112 l10 14 l-6 12 l12 16 l-4 14 l10 16" fill="none" stroke="#7F1D1D" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M258 106 L298 104 L304 190 L264 192z" fill="#EF4444" opacity=".2"/>
+  <rect x="256" y="102" width="48" height="94" rx="3" fill="none" stroke="#EF4444" stroke-width="2.5" stroke-dasharray="6 4"/>
+  <circle cx="230" cy="214" r="9" fill="#B45309" opacity=".55"/><circle cx="242" cy="222" r="5" fill="#B45309" opacity=".45"/>
+  <rect x="216" y="200" width="36" height="34" rx="3" fill="none" stroke="#F59E0B" stroke-width="2.5" stroke-dasharray="6 4"/>
+  <!-- robot on the wall -->
+  <g transform="translate(150 150)">
+    <rect x="-6" y="-8" width="74" height="18" rx="9" fill="${INK}"/>
+    <rect x="-6" y="56" width="74" height="18" rx="9" fill="${INK}"/>
+    ${[4,22,40,58].map(x=>`<circle cx="${x}" cy="1" r="5" fill="#475569"/><circle cx="${x}" cy="65" r="5" fill="#475569"/>`).join("")}
+    <rect x="4" y="6" width="54" height="54" rx="8" fill="#2563EB" stroke="${INK}" stroke-width="2.5"/>
+    <rect x="14" y="16" width="34" height="14" rx="3" fill="#BFDBFE"/>
+    <circle cx="58" cy="33" r="8" fill="#fff" stroke="${INK}" stroke-width="2.5"/><circle cx="58" cy="33" r="3" fill="${INK}"/>
   </g>
-  ${[[134,"d1"],[180,"d2"],[226,"d3"]].map(([y,l])=>`<line x1="132" y1="${y}" x2="${y==180?112:122}" y2="${y}" stroke="${C.led}" stroke-width="1.6" stroke-dasharray="3 2"/><text x="236" y="${y+4}" ${F} font-size="9.5" fill="${C.led}">${l}</text><line x1="232" y1="${y}" x2="214" y2="${y}" stroke="${C.dim}"/>`).join("")}
-  <path d="M132 158 L60 110 M132 158 L72 205" stroke="${C.cu}" stroke-width="1" stroke-dasharray="2 3" opacity=".8"/>
-  <text x="270" y="64" ${F} font-size="10" fill="${C.silk2}">SAFETY STATE MACHINE</text>
-  ${[["NORMAL",C.led,84],["WARNING",C.cu,148],["STOPPED",C.red,212]].map(([t,c,y])=>`<rect x="270" y="${y}" width="150" height="40" rx="3" fill="#0E1915" stroke="${c}" stroke-width="1.4"/><circle cx="290" cy="${y+20}" r="5" fill="${c}"/><text x="306" y="${y+24}" ${F} font-size="11.5" fill="${c}" font-weight="700">${t}</text>`).join("")}
-  <line x1="345" y1="124" x2="345" y2="142" stroke="${C.cu}" stroke-width="1.5"/><path d="M345 148 l-4 -7 h8z" fill="${C.cu}"/>
-  <line x1="345" y1="188" x2="345" y2="206" stroke="${C.cu}" stroke-width="1.5"/><path d="M345 212 l-4 -7 h8z" fill="${C.cu}"/>
-  <text x="270" y="276" ${F} font-size="9.5" fill="${C.silk2}">LATCH until manual reset</text>
-  <rect x="452" y="84" width="160" height="168" rx="4" fill="#0E1915" stroke="${C.dim}"/>
-  <text x="466" y="108" ${F} font-size="10" fill="${C.silk2}">STOP CONDITION</text>
-  <text x="466" y="136" ${F} font-size="10.5" fill="${C.silk}">Δd/dt  &gt; th</text>
-  <text x="532" y="160" ${F} font-size="12" fill="${C.cu}" font-weight="700">AND</text>
-  <text x="466" y="184" ${F} font-size="10.5" fill="${C.silk}">|ω|_IMU &gt; th</text>
-  <line x1="466" y1="200" x2="598" y2="200" stroke="${C.dim}"/>
-  <text x="466" y="222" ${F} font-size="10.5" fill="${C.red}">≥ 200 ms → PWM OFF</text>
-  <text x="270" y="318" ${F} font-size="9.5" fill="${C.silk2}">YOLOv8s-seg · TensorRT FP16 · Mask mAP50 0.580</text>
-  </svg>`}
+  <path d="M216 183 L258 112 L262 190z" fill="#FDE68A" opacity=".45"/>
+  <!-- console -->
+  <g transform="translate(392 168)">
+    <rect width="72" height="52" rx="7" fill="${INK}"/>
+    <rect x="6" y="6" width="60" height="34" rx="3" fill="#94A3B8"/>
+    <path d="M30 10 l4 6 l-3 6 l5 7 l-2 6" stroke="#7F1D1D" stroke-width="1.6" fill="none"/>
+    <rect x="25" y="9" width="16" height="28" fill="none" stroke="#EF4444" stroke-width="1.5"/>
+    <circle cx="58" cy="46" r="3" fill="#EF4444"/>
+  </g>
+  <path d="M370 200 q14 -6 22 -4" stroke="${INK}" stroke-width="1.6" stroke-dasharray="3 3" fill="none"/>
+</svg>`
 };
 
 /* ================= PROJECT DATA (프로젝트 기술서 기반) ================= */
@@ -559,43 +524,52 @@ const P = [
 }
 ];
 
+
 /* ================= RENDER ================= */
 const GH_ICON = `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>`;
 const SECS = [["s1","개요"],["s2","설계 및 구현"],["s3","트러블슈팅"],["s4","리뷰"]];
 
-const cards = document.getElementById("cards");
-cards.innerHTML = P.map(p=>`
+const cards=document.getElementById("cards");
+cards.innerHTML=P.map(p=>`
   <button class="card" data-id="${p.id}" aria-label="${p.title} 상세 보기">
     <div class="cover">${COVER[p.cover]()}</div>
     <div class="body">
-      <div class="meta"><span class="no">${p.no}</span><span>${p.team}</span><span>${p.period}</span></div>
+      <div class="meta"><span class="no">${p.no}</span><i></i><span>${p.team}</span><i></i><span>${p.period}</span></div>
       <h3>${p.title}</h3>
       <p class="sum">${p.sum}</p>
       <ul class="skills">${p.skills.map(s=>`<li>${s}</li>`).join("")}</ul>
-      <div class="go"><span>&gt; open detail</span><b>상세 보기 →</b></div>
     </div>
   </button>`).join("");
 
+/* contact popover */
+const cbtn=document.getElementById("cbtn"), pop=document.getElementById("pop");
+const setPop=o=>{pop.classList.toggle("on",o);cbtn.setAttribute("aria-expanded",o)};
+cbtn.onclick=e=>{e.stopPropagation();setPop(!pop.classList.contains("on"))};
+document.addEventListener("click",e=>{if(!pop.contains(e.target)) setPop(false)});
+pop.addEventListener("click",e=>{const c=e.target.closest(".copy"); if(!c) return;
+  const done=()=>{const t=c.textContent;c.textContent="복사됨";setTimeout(()=>c.textContent=t,1200)};
+  if(navigator.clipboard) navigator.clipboard.writeText(c.dataset.copy).then(done,done); else done();});
+
+/* detail sheet */
 const sheet=document.getElementById("sheet"), scrim=document.getElementById("scrim"),
       sbody=document.getElementById("sbody"), path=document.getElementById("path"), ghTop=document.getElementById("gh-top");
 let lastFocus=null, io=null;
-
 function render(p){
   const i=P.indexOf(p), prev=P[(i-1+P.length)%P.length], next=P[(i+1)%P.length];
-  path.innerHTML=`~/projects/<b>${p.no.replace("/","")}</b> — ${p.title}`;
+  path.innerHTML=`<b>${p.no}</b>&nbsp; ${p.title}`;
   ghTop.href=p.gh; ghTop.innerHTML=`${GH_ICON}GitHub`;
   sbody.innerHTML=`
     <div class="dhead">
-      <div class="meta"><span class="no">${p.no}</span><span>${p.team}</span><span>${p.period}</span></div>
+      <div class="meta"><span class="no">${p.no}</span><i></i><span>${p.team}</span><i></i><span>${p.period}</span></div>
       <h2 id="d-title">${p.title}</h2>
       <div class="role"><div class="lab">담당 역할</div><ul>${p.role.map(r=>`<li>${r}</li>`).join("")}</ul></div>
-      <div class="actions"><a class="btn gh" href="${p.gh}" target="_blank" rel="noopener">${GH_ICON}GitHub 저장소 바로가기 ↗</a></div>
+      <div class="actions"><a class="btn dark" href="${p.gh}" target="_blank" rel="noopener">${GH_ICON}GitHub 저장소 바로가기 ↗</a></div>
     </div>
     <nav class="tabs" aria-label="목차">${SECS.map(([k,t],n)=>`<a href="#${p.id}-${k}" data-t="${k}"><b>0${n+1}</b>${t}</a>`).join("")}</nav>
     ${SECS.map(([k,t],n)=>`<section class="dsec" id="${p.id}-${k}" data-s="${k}"><h3><span class="n">0${n+1}</span>${t}</h3>${p[k]}</section>`).join("")}
     <div class="pager">
-      <button data-go="${prev.id}"><small>← PREV ${prev.no}</small><span>${prev.title}</span></button>
-      <button class="nx" data-go="${next.id}"><small>NEXT ${next.no} →</small><span>${next.title}</span></button>
+      <button data-go="${prev.id}"><small>← 이전 ${prev.no}</small><span>${prev.title}</span></button>
+      <button class="nx" data-go="${next.id}"><small>다음 ${next.no} →</small><span>${next.title}</span></button>
     </div>`;
   sbody.scrollTop=0;
   const tabs=[...sbody.querySelectorAll(".tabs a")];
@@ -611,7 +585,7 @@ function render(p){
 function openP(id,push=true){
   const p=P.find(x=>x.id===id); if(!p) return;
   if(!sheet.classList.contains("on")) lastFocus=document.activeElement;
-  render(p);
+  render(p); setPop(false);
   sheet.classList.add("on"); scrim.classList.add("on"); sheet.setAttribute("aria-hidden","false");
   document.body.classList.add("locked");
   if(push && location.hash!=="#"+id) history.pushState(null,"","#"+id);
@@ -633,8 +607,8 @@ sbody.addEventListener("click",e=>{
 document.getElementById("close").onclick=()=>closeP();
 scrim.onclick=()=>closeP();
 document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"){ if(sheet.classList.contains("on")) closeP(); else setPop(false); return; }
   if(!sheet.classList.contains("on")) return;
-  if(e.key==="Escape") closeP();
   const i=P.findIndex(p=>"#"+p.id===location.hash);
   if(i>-1 && e.key==="ArrowRight") openP(P[(i+1)%P.length].id);
   if(i>-1 && e.key==="ArrowLeft") openP(P[(i-1+P.length)%P.length].id);
