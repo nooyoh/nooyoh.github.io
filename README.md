@@ -1,6 +1,6 @@
-# nooyoh.github.io
+# 이호윤의 포트폴리오
 
-이호윤 — 임베디드 펌웨어 포트폴리오 · https://nooyoh.github.io
+https://nooyoh.github.io
 
 | No | 프로젝트 | 저장소 |
 |---|---|---|
@@ -9,6 +9,6 @@
 | P/03 | 리눅스 커널 디바이스 드라이버 4종 | [Thermal_Fan_Driver](https://github.com/nooyoh/Thermal_Fan_Driver) |
 | P/04 | 철제 구조물 안전 점검 로봇 (사일로봇) | [Silo_Robot](https://github.com/nooyoh/Silo_Robot) |
 
-정적 사이트(HTML 1개 + `assets/img`)라 빌드 과정 없이 GitHub Pages로 바로 배포됩니다.
-프로젝트 내용은 `index.html`의 `const P = [...]` 배열에서 수정합니다.
+HTML 파일 1개(카드 표지는 코드로 그린 SVG)라 빌드 과정 없이 GitHub Pages로 바로 배포됩니다.
+프로젝트 내용은 `index.html`의 `const P = [...]` 배열(s1 개요 · s2 설계 및 구현 · s3 트러블슈팅 · s4 리뷰), 표지는 `const COVER`에서 수정합니다.
 특정 프로젝트 직접 링크: `https://nooyoh.github.io/#silo-robot` (`robotic-arm`, `thermal-sr`, `linux-driver`).
