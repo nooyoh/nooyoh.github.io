@@ -1,1 +1,14 @@
 # nooyoh.github.io
+
+이호윤 — 임베디드 펌웨어 포트폴리오 · https://nooyoh.github.io
+
+| No | 프로젝트 | 저장소 |
+|---|---|---|
+| P/01 | 저지연 실시간 동작 모방 로봇팔 | [Robotic_Arm](https://github.com/nooyoh/Robotic_Arm) |
+| P/02 | RGB–열화상 융합 고해상도 열화상 복원 | [Thermal-Super-Resolution-SRT](https://github.com/nooyoh/Thermal-Super-Resolution-SRT) |
+| P/03 | 리눅스 커널 디바이스 드라이버 4종 | [Thermal_Fan_Driver](https://github.com/nooyoh/Thermal_Fan_Driver) |
+| P/04 | 철제 구조물 안전 점검 로봇 (사일로봇) | [Silo_Robot](https://github.com/nooyoh/Silo_Robot) |
+
+정적 사이트(HTML 1개 + `assets/img`)라 빌드 과정 없이 GitHub Pages로 바로 배포됩니다.
+프로젝트 내용은 `index.html`의 `const P = [...]` 배열에서 수정합니다.
+특정 프로젝트 직접 링크: `https://nooyoh.github.io/#silo-robot` (`robotic-arm`, `thermal-sr`, `linux-driver`).
