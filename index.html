@@ -180,7 +180,7 @@ code{font-family:var(--mono);font-size:.86em;background:var(--bg);border:1px sol
       </div>
     </div>
   </div>
-  <div class="wrap"><div class="hline"><span>PROJECTS <b>04</b></span></div></div>
+  <div class="wrap"><div class="hline"><span>PROJECTS <b>06</b></span></div></div>
 </header>
 
 <main>
@@ -335,7 +335,86 @@ silo: ()=>`<svg viewBox="0 0 480 300" xmlns="http://www.w3.org/2000/svg">
     <circle cx="58" cy="46" r="3" fill="#EF4444"/>
   </g>
   <path d="M370 200 q14 -6 22 -4" stroke="${INK}" stroke-width="1.6" stroke-dasharray="3 3" fill="none"/>
-</svg>`
+</svg>`,
+/* 05 AI 모터 — 진동 센서 달린 모터 + 대시보드 + 독립 안전 MCU·릴레이·E-STOP */
+motor: ()=>`<svg viewBox="0 0 480 300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="480" height="300" fill="#FBF1EC"/>
+  <circle cx="130" cy="160" r="112" fill="#F6E3D9"/>
+  <!-- motor on mount -->
+  <rect x="58" y="214" width="150" height="16" rx="4" fill="#64748B"/>
+  <rect x="78" y="196" width="22" height="20" fill="#94A3B8"/><rect x="164" y="196" width="22" height="20" fill="#94A3B8"/>
+  <rect x="70" y="130" width="116" height="70" rx="12" fill="#CBD5E1" stroke="${INK}" stroke-width="2.5"/>
+  ${[0,1,2,3,4].map(i=>`<line x1="${88+i*18}" y1="134" x2="${88+i*18}" y2="196" stroke="#94A3B8" stroke-width="2"/>`).join("")}
+  <rect x="186" y="156" width="26" height="18" rx="3" fill="#94A3B8" stroke="${INK}" stroke-width="2"/>
+  <ellipse cx="220" cy="165" rx="7" ry="22" fill="#F97316" stroke="${INK}" stroke-width="2"/>
+  <rect x="104" y="112" width="34" height="20" rx="3" fill="${BLUE}" stroke="${INK}" stroke-width="2"/>
+  <circle cx="113" cy="122" r="3" fill="#fff"/>
+  <g fill="none" stroke="#F97316" stroke-width="2.5" stroke-linecap="round" opacity=".8">
+    <path d="M60 116 q-8 -8 0 -16 q8 -8 0 -16"/><path d="M196 112 q8 -8 0 -16 q-8 -8 0 -16"/>
+  </g>
+  <!-- dashboard window -->
+  <g transform="translate(256 52)">
+    <rect width="196" height="128" rx="10" fill="#fff" stroke="${INK}" stroke-width="2.5"/>
+    <path d="M0 10 a10 10 0 0 1 10 -10 h176 a10 10 0 0 1 10 10 v12 h-196z" fill="${INK}"/>
+    <circle cx="12" cy="11" r="3" fill="#F87171"/><circle cx="22" cy="11" r="3" fill="#FBBF24"/><circle cx="32" cy="11" r="3" fill="#34D399"/>
+    <path d="M12 72 l10 -14 l8 22 l10 -30 l9 26 l9 -12 l10 18 l9 -28 l10 20 l9 -8 l10 10" fill="none" stroke="${BLUE}" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M12 104 l12 -4 l12 6 l12 -8 l12 5 l12 -3 l12 4 l12 -6" fill="none" stroke="#94A3B8" stroke-width="2"/>
+    <rect x="132" y="36" width="54" height="20" rx="10" fill="#DCFCE7"/><circle cx="143" cy="46" r="4" fill="#16A34A"/><rect x="151" y="43" width="28" height="6" rx="3" fill="#16A34A"/>
+    <rect x="132" y="62" width="54" height="20" rx="10" fill="#FEF3C7"/><circle cx="143" cy="72" r="4" fill="#D97706"/><rect x="151" y="69" width="28" height="6" rx="3" fill="#D97706"/>
+    <rect x="132" y="88" width="54" height="20" rx="10" fill="#FEE2E2"/><circle cx="143" cy="98" r="4" fill="#DC2626"/><rect x="151" y="95" width="28" height="6" rx="3" fill="#DC2626"/>
+  </g>
+  <!-- safety MCU + relay + E-STOP -->
+  <g transform="translate(262 204)">
+    <rect width="74" height="54" rx="6" fill="#0F766E" stroke="${INK}" stroke-width="2.5"/>
+    <rect x="22" y="14" width="30" height="26" rx="2" fill="${INK}"/>
+    ${[0,1,2,3,4].map(i=>`<rect x="${24+i*6}" y="10" width="2" height="4" fill="#CBD5E1"/><rect x="${24+i*6}" y="40" width="2" height="4" fill="#CBD5E1"/>`).join("")}
+    <path d="M74 27 h20" stroke="${INK}" stroke-width="2"/>
+    <rect x="94" y="12" width="44" height="30" rx="4" fill="#1D4ED8" stroke="${INK}" stroke-width="2.5"/>
+    <path d="M104 34 v-12 l10 6 l10 -6 v12" fill="none" stroke="#fff" stroke-width="2"/>
+    <circle cx="170" cy="27" r="24" fill="#FDE047" stroke="${INK}" stroke-width="2.5"/>
+    <circle cx="170" cy="27" r="15" fill="#DC2626" stroke="${INK}" stroke-width="2"/>
+  </g>
+  <path d="M212 150 C 238 150 236 230 262 230" fill="none" stroke="${INK}" stroke-width="1.6" stroke-dasharray="4 3"/>
+</svg>`,
+
+/* 06 I2C Sensor Monitor — Basys3 두 장 + I2C 버스 + 센서 + OLED */
+i2c: ()=>{
+  const board=(x,y)=>`<g transform="translate(${x} ${y})">
+    <rect width="150" height="104" rx="8" fill="#14532D" stroke="${INK}" stroke-width="2.5"/>
+    <rect x="52" y="14" width="40" height="40" rx="3" fill="${INK}"/><rect x="58" y="20" width="28" height="28" rx="2" fill="#334155"/>
+    ${[0,1,2,3].map(i=>`<rect x="${12+i*9}" y="16" width="7" height="12" rx="1" fill="#0F172A"/><path d="M${13.5+i*9} 19 h4 M${13.5+i*9} 22 h4 M${13.5+i*9} 25 h4" stroke="#F87171" stroke-width="1" opacity="${i==1?.3:1}"/>`).join("")}
+    ${[...Array(10)].map((_,i)=>`<rect x="${12+i*13}" y="78" width="8" height="14" rx="1.5" fill="#E2E8F0"/><rect x="${13.5+i*13}" y="${i%3?86:80}" width="5" height="5" fill="#475569"/>`).join("")}
+    ${[...Array(10)].map((_,i)=>`<circle cx="${16+i*13}" cy="68" r="2.4" fill="${i%2?"#4ADE80":"#166534"}"/>`).join("")}
+    <circle cx="122" cy="32" r="9" fill="#94A3B8" stroke="${INK}" stroke-width="1.5"/>
+    <rect x="102" y="20" width="10" height="24" fill="#CBD5E1"/>
+  </g>`;
+  return `<svg viewBox="0 0 480 300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="480" height="300" fill="#EEF5EF"/>
+  ${board(28,150)}${board(302,150)}
+  <!-- I2C bus -->
+  <path d="M178 182 H302" stroke="#2563EB" stroke-width="3"/><path d="M178 196 H302" stroke="#F59E0B" stroke-width="3"/>
+  <text x="240" y="176" font-family="ui-monospace,Consolas,monospace" font-size="11" font-weight="700" fill="#2563EB" text-anchor="middle">SDA</text>
+  <text x="240" y="212" font-family="ui-monospace,Consolas,monospace" font-size="11" font-weight="700" fill="#D97706" text-anchor="middle">SCL</text>
+  <!-- OLED on master -->
+  <path d="M110 150 V120" stroke="${INK}" stroke-width="2"/>
+  <g transform="translate(40 36)">
+    <rect width="140" height="86" rx="6" fill="#1E3A8A" stroke="${INK}" stroke-width="2.5"/>
+    <rect x="10" y="10" width="120" height="60" fill="#020617"/>
+    ${[0,1,2].map(r=>`<rect x="18" y="${19+r*16}" width="${[22,22,22][r]}" height="7" rx="1" fill="#7DD3FC"/><rect x="48" y="${19+r*16}" width="${[54,44,34][r]}" height="7" rx="1" fill="#E0F2FE"/>`).join("")}
+  </g>
+  <!-- sensors on slave -->
+  <path d="M340 150 V120 M420 150 V120" stroke="${INK}" stroke-width="2"/>
+  <g transform="translate(314 54)">
+    <rect width="54" height="66" rx="4" fill="#38BDF8" stroke="${INK}" stroke-width="2.5"/>
+    ${[0,1,2,3,4].map(r=>[0,1,2,3].map(c=>`<rect x="${8+c*10}" y="${8+r*10}" width="6" height="6" rx="1" fill="#0C4A6E" opacity=".7"/>`).join("")).join("")}
+  </g>
+  <g transform="translate(384 66)">
+    <rect width="78" height="54" rx="4" fill="#1D4ED8" stroke="${INK}" stroke-width="2.5"/>
+    <circle cx="20" cy="27" r="15" fill="#CBD5E1" stroke="${INK}" stroke-width="2"/><circle cx="20" cy="27" r="7" fill="#64748B"/>
+    <circle cx="58" cy="27" r="15" fill="#CBD5E1" stroke="${INK}" stroke-width="2"/><circle cx="58" cy="27" r="7" fill="#64748B"/>
+  </g>
+  <g fill="none" stroke="#1D4ED8" stroke-width="2" opacity=".5" stroke-linecap="round"><path d="M400 54 q23 -14 46 0"/><path d="M392 42 q31 -20 62 0"/></g>
+  </svg>`}
 };
 
 /* ================= PROJECT DATA (프로젝트 기술서 기반) ================= */
@@ -532,6 +611,106 @@ const P = [
     <h4><span class="m">4-2</span>고찰</h4>
     <div class="note"><b>모델 성능은 데이터 구조에서 결정됨</b><p>하이퍼파라미터 조정보다 라벨 구조·도메인 검증이 먼저임을 1차 모델 실패 분석으로 체감했습니다.</p></div>
     <div class="note"><b>안전 판정은 다중 근거로</b><p>단일 센서·절대 임계값은 주행 환경이 바뀌면 오판정하므로, 여러 근거가 일치할 때만 정지하는 구조가 필요함을 확인했습니다.</p></div>`
+},
+{
+  id:"ai-motor", no:"P/05", cover:"motor",
+  title:"센서 데이터 기반 AI 모터 안전 제어 시스템",
+  team:"팀 프로젝트 (4인)", period:"2026.09.02 – 2026.09.16",
+  sum:"STM32로 수집한 진동·전류 데이터를 Jetson의 1D-CNN으로 정상·풀림·불균형 3클래스 진단하고, 이상 시 AI와 독립된 AVR 안전 상태기가 릴레이로 모터 전원을 차단하는 시스템.",
+  skills:["Python","C","PyTorch","ONNX","PyQt5","Jetson Orin Nano","STM32 F411RE","ATmega128A"],
+  gh:"https://github.com/nooyoh/safe-edge-ai-motor",
+  role:["AI 학습·추론 — 진동·전류 데이터 전처리, 1D-CNN 결함 진단 모델 학습·평가","Jetson 배포 — ONNX 변환·추론 서버 구성, 5-window 투표 경보 연동"],
+  s1:`<ul class="pts">
+      <li>GY-521(3축 가속도)·ACS712(전류)를 STM32에서 1kHz로 동기 수집해 UART 전송</li>
+      <li>PC가 프레임을 파싱해 Jetson(TCP)에 전달 → 1D-CNN으로 정상·풀림·불균형 3클래스 진단</li>
+      <li>최근 5개 윈도우 투표로 결함 확정 시 모터 정지, PyQt5 대시보드에 상태·이벤트 표시</li>
+      <li>릴레이 권한은 ATmega128A만 보유 → Heartbeat 끊김·E-STOP 시 AI와 무관하게 전원 차단</li></ul>
+    <div class="kv">
+      <div class="k">수행 목표</div><div class="v">진동 3축·전류 데이터로 모터 상태(정상·풀림·불균형)를 실시간 진단 / AI 판단과 무관하게 AVR이 독립적으로 모터 전원을 차단하는 안전 구조 구현</div>
+      <div class="k">언어</div><div class="v">Python, C</div>
+      <div class="k">Library</div><div class="v">PyTorch, ONNX, NumPy, PyQt5</div>
+      <div class="k">Tool</div><div class="v">VS Code, Git</div>
+      <div class="k">Board</div><div class="v">Jetson Orin Nano, STM32 F411RE, ATmega128A</div></div>`,
+  s2:`<h4><span class="m">2-1</span>데이터 수집 및 누수 방지 분할</h4>
+    <ul class="pts"><li>윈도우 생성 전 세트 단위로 Train 5 / Valid 1 / Test 1 분리 → 인접 구간 누수 차단</li>
+      <li>기동 구간 10초 제외, 가속도 드롭아웃 보정 후 512샘플(0.512s)·hop 256 윈도우 생성</li></ul>
+    <h4><span class="m">2-2</span>1D-CNN 입력 설계</h4>
+    <ul class="pts"><li>진동 입력 [4×512] : X·Y·Z 파형 3채널 + 정상 대비 상대 진폭 1채널</li>
+      <li>상대 진폭 = 3축 합성 진동 크기 ÷ 같은 PWM duty의 Train NORMAL 기준 RMS</li>
+      <li>보조 입력 [5] : 전류 평균·RMS·최대값, 진동 RMS, 정상 대비 RMS 비율</li></ul>
+    <h4><span class="m">2-3</span>학습 전략 및 모델 선택</h4>
+    <ul class="pts"><li>클래스 가중 Cross Entropy + Label Smoothing으로 클래스 불균형·과잉 확신 완화</li>
+      <li>AdamW(가중치 감소 분리) + Early Stopping으로 과적합 방지</li>
+      <li>Accuracy 대신 <strong>Validation Macro F1</strong> 최고 시점 가중치 채택 → 결함 클래스 미검출 방지</li></ul>
+    <h4><span class="m">2-4</span>Jetson 배포 및 경보 정책</h4>
+    <ul class="pts"><li>최종 모델 ONNX 변환 + 전처리 파라미터 JSON 동봉, Jetson TCP(59300) 추론 서버 구성</li>
+      <li>신뢰도 0.75 이상 결함 판정이 최근 5개 윈도우 중 4개(약 1.25s)일 때만 정지</li></ul>`,
+  s3:`<div class="issue"><div class="q"><span class="tag">ISSUE 01</span><p>3채널(X·Y·Z) 입력으로 UNBALANCE 검출 미흡</p></div>
+      <div class="a"><span class="tag">FIX</span><ul class="pts">
+      <li>파형 모양만으로는 불균형 시 커지는 진동 크기 차이를 구분하기 어려움</li>
+      <li>PWM별 정상 RMS로 나눈 <strong>상대 진폭 채널을 추가해 4채널 입력</strong>으로 재학습</li></ul></div></div>
+    <div class="issue"><div class="q"><span class="tag">ISSUE 02</span><p>실장비 정상 구동에서도 추론이 불안정</p></div>
+      <div class="a"><span class="tag">FIX</span><ul class="pts">
+      <li>학습한 NORMAL 데이터와 실제 구동 환경의 정상 진동 수준이 다름</li>
+      <li>첫 구동 시 정상 상태를 1회 측정해 <strong>기준값으로 설정, 입력 진폭 보정</strong></li></ul></div></div>
+    <div class="issue"><div class="q"><span class="tag">ISSUE 03</span><p>전류 센서 한계로 LOAD 클래스 분리 불가</p></div>
+      <div class="a"><span class="tag">FIX</span><ul class="pts">
+      <li>ACS712 측정 정확도·신뢰도가 부하 변화를 구분하기에 부족</li>
+      <li>LOAD 제외, 진동 중심 3클래스 진단으로 범위 조정 (전류는 보조 특징으로 유지)</li></ul></div></div>`,
+  s4:`<h4><span class="m">4-1</span>결과</h4>
+    <div class="result"><div><b>0.850</b><small>Test Macro F1</small></div><div><b>10.4ms</b><small>추론 p95</small></div><div><b>116ms</b><small>E2E p95</small></div><div><b>0%</b><small>패킷 손실</small></div></div>
+    <ul class="pts"><li>클래스별 Recall : NORMAL 90.6% / UNBALANCE 89.0% / LOOSENESS 75.0%</li>
+      <li>결함 확정 시 AVR TRIPPED 래치로 릴레이 차단, 수동 ARM 요청 전까지 재기동 불가</li></ul>
+    <h4><span class="m">4-2</span>고찰</h4>
+    <div class="note"><b>평가 지표가 모델의 성격을 결정</b><p>정상 데이터가 많으면 Accuracy가 결함 미검출을 가리므로, Macro F1과 클래스별 Recall로 판단해야 함을 확인했습니다.</p></div>
+    <div class="note"><b>AI는 판단, 정지는 하드웨어</b><p>오검출 가능성이 있는 AI와 별개로 독립 MCU가 차단을 보장해야 안전 구조가 성립합니다.</p></div>`
+},
+{
+  id:"i2c-monitor", no:"P/06", cover:"i2c",
+  title:"I2C Sensor Monitor",
+  team:"팀 프로젝트 (2인)", period:"2026.11.03 – 2026.11.06",
+  sum:"Basys3 두 장을 I2C로 연결해 Slave가 측정한 온습도·거리 값을 Master가 읽어 FND·LED·UART·OLED로 표시하는 Verilog RTL 센서 모니터링 시스템.",
+  skills:["Verilog HDL","Xilinx Vivado","Basys3","I2C","FSM","SSD1306 OLED","로직 분석기"],
+  gh:"https://github.com/nooyoh/I2C_Sensor_Monitor",
+  role:["Master 보드 RTL — I2C Master, Bus Arbiter, Sensor Reader, OLED Controller","FND·LED·UART 출력 구현, Master Testbench 및 로직 분석기 실측 검증"],
+  s1:`<ul class="pts">
+      <li>Slave 보드(0x42)가 DHT11·HC-SR04를 측정해 상태 헤더 + 센서값 6 byte로 제공</li>
+      <li>Master 보드가 0.2초마다 6 byte를 읽어 FND·LED·UART·OLED(0x3C)로 출력</li>
+      <li>센서 읽기와 OLED 출력이 하나의 I2C 버스를 공유 → 자체 Arbiter로 중재</li>
+      <li>센서 1개가 실패해도 통신은 유지하고, 실패한 값만 '--'로 표시</li></ul>
+    <div class="kv">
+      <div class="k">수행 목표</div><div class="v">I2C Master/Slave·센서·OLED 드라이버를 Verilog RTL로 직접 설계 / 하나의 I2C 버스에서 센서 읽기와 OLED 출력을 충돌 없이 동시 운용</div>
+      <div class="k">언어</div><div class="v">Verilog HDL</div>
+      <div class="k">Tool</div><div class="v">Xilinx Vivado, Vivado Simulator, 로직 분석기</div>
+      <div class="k">Board</div><div class="v">Digilent Basys3 ×2, DHT11, HC-SR04, SSD1306 OLED</div></div>`,
+  s2:`<h4><span class="m">2-1</span>6 byte 데이터 포맷 합의 및 읽기 시퀀스</h4>
+    <ul class="pts"><li>STATUS[7:4] = 0xA 서명 + DIST_OK·DHT_OK 비트 → 온도·습도 정수/소수 → 거리</li>
+      <li><code>S 0x84 · 0x00 → Sr 0x85 → 6 byte → P</code> : Repeated START로 읽기 방향 전환</li></ul>
+    <h4><span class="m">2-2</span>명령 단위 I2C Master</h4>
+    <ul class="pts"><li>START / WRITE / READ / STOP 4개 명령 인터페이스 (start 1clk → busy → done 1clk)</li>
+      <li>1 bit = 4 phase : SCL LOW에서 SDA 변경, SCL HIGH 중앙에서 샘플링 (SCL 100kHz)</li>
+      <li>Open-drain 구동, Slave가 보낸 SDA는 2단 FF 동기화로 metastability 방지</li></ul>
+    <h4><span class="m">2-3</span>Sensor Reader · OLED Controller FSM</h4>
+    <ul class="pts"><li><code>sensor_reader</code> : 상태 1개 = 명령 1개, 6 byte를 48bit 버퍼에 shift 후 STATUS 일괄 판정</li>
+      <li><code>oled_controller</code> : 명령 6 byte + 화면 512 byte 전송, NACK 시 초기화 명령부터 재전송</li>
+      <li><code>oled_text</code> : 5×7 폰트를 세로 8 pixel column byte로 변환해 128×4 page 화면 생성</li></ul>`,
+  s3:`<div class="issue"><div class="q"><span class="tag">ISSUE 01</span><p>센서 읽기와 OLED 출력의 I2C 버스 충돌</p></div>
+      <div class="a"><span class="tag">FIX</span><ul class="pts">
+      <li>두 모듈이 같은 <code>i2c_master</code>를 동시에 사용하려 해 통신 충돌 발생</li>
+      <li><strong><code>i2c_arbiter</code> 설계</strong> : 버스가 비었을 때만 grant, 동시 요청 시 센서 읽기 우선</li>
+      <li>OLED는 512 byte를 끊김 없이 점유(약 47ms), 센서는 대기해도 0.2초 주기 내 완료</li></ul></div></div>
+    <div class="issue"><div class="q"><span class="tag">ISSUE 02</span><p>첫 센서 읽기 이후 I2C 버스 정지 (이후 계속 NACK)</p></div>
+      <div class="a"><span class="tag">FIX</span><ul class="pts">
+      <li>로직 분석기 확인 : 6번째 byte 뒤 SDA가 LOW로 고정되어 STOP 미성립</li>
+      <li>원인 : 마지막 byte에도 ACK를 보내 Slave가 다음 byte 송신을 이어감</li>
+      <li><strong>마지막 byte만 NACK 전송</strong> : <code>read_ack &lt;= (r_rx_cnt == RX_LAST)</code></li></ul></div></div>`,
+  s4:`<h4><span class="m">4-1</span>결과</h4>
+    <div class="result"><div><b>6/6 byte</b><small>로직 분석기 실측 일치</small></div><div><b>7개</b><small>Testbench 시나리오 통과</small></div></div>
+    <ul class="pts"><li>로직 분석기 실측 <code>A3 19 08 30 00 09</code> = OLED 25.8℃ / 48.0% / 9cm 표시와 일치</li>
+      <li>Testbench 시나리오 : 정상·버튼·DHT 실패·거리 실패·서명 불일치·NACK·복구</li></ul>
+    <h4><span class="m">4-2</span>고찰</h4>
+    <div class="note"><b>공유 자원은 분배 규칙까지 설계</b><p>장치를 연결하는 것만큼 버스 소유권과 우선순위를 정하는 것이 중요함을 체감했습니다.</p></div>
+    <div class="note"><b>프로토콜은 끝맺음까지</b><p>I2C의 NACK는 오류가 아닌 '읽기 끝' 신호이며, SDA를 누가 언제 놓는지까지 설계해야 함을 배웠습니다.</p></div>`
 }
 ];
 
