@@ -25,10 +25,17 @@ button{font:inherit;color:inherit}
 .wrap{max-width:1200px;margin:0 auto;padding:0 32px}
 
 /* header */
-header{padding:72px 0 44px}
+header{padding:64px 0 0;margin-bottom:36px}
 .head{display:flex;align-items:flex-start;justify-content:space-between;gap:24px}
-h1{font-size:clamp(30px,4.4vw,44px);font-weight:800;letter-spacing:-.035em;line-height:1.2}
-.sub{margin-top:12px;color:var(--ink-2);font-size:17px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);padding:5px 12px 5px 10px;border-radius:999px}
+.eyebrow i{width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,.18)}
+h1{margin-top:18px;font-size:clamp(32px,4.8vw,50px);font-weight:800;letter-spacing:-.04em;line-height:1.15}
+h1 .name{color:var(--accent);white-space:nowrap}
+h1 span.rest{color:var(--ink)}
+.sub{margin-top:14px;color:var(--ink-2);font-size:16.5px;max-width:620px}
+.hline{margin-top:40px;display:flex;align-items:center;gap:14px;font-family:var(--mono);font-size:12px;color:var(--ink-3);letter-spacing:.06em}
+.hline::after{content:"";flex:1;height:1px;background:var(--line-2)}
+.hline b{color:var(--ink);font-weight:700}
 .contact{position:relative;flex-shrink:0;margin-top:6px}
 .cbtn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line-2);background:var(--card);padding:9px 16px;border-radius:999px;font-size:14px;font-weight:600;cursor:pointer;transition:border-color .2s,background .2s}
 .cbtn:hover,.cbtn[aria-expanded="true"]{border-color:var(--ink);}
@@ -134,7 +141,9 @@ code{font-family:var(--mono);font-size:.86em;background:var(--bg);border:1px sol
 @media (max-width:1024px){.grid{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:640px){
   .wrap{padding:0 18px}
-  header{padding:44px 0 30px}
+  header{padding:44px 0 0;margin-bottom:28px}
+  .hline{margin-top:28px}
+  .sub br{display:none}
   .head{flex-direction:column;gap:16px}
   .contact{margin-top:0}
   .pop{left:0;right:auto;width:min(310px,calc(100vw - 36px))}
@@ -153,8 +162,9 @@ code{font-family:var(--mono);font-size:.86em;background:var(--bg);border:1px sol
 <header>
   <div class="wrap head">
     <div>
-      <h1>이호윤의 포트폴리오</h1>
-      <p class="sub">지금까지 제가 진행한 프로젝트입니다. 아래 카드를 누르면 각 프로젝트의 상세 내용이 열립니다.</p>
+      <span class="eyebrow"><i></i>Embedded Software</span>
+      <h1><span class="name">이호윤</span><span class="rest">의 포트폴리오</span></h1>
+      <p class="sub">지금까지 제가 진행한 프로젝트입니다.<br>아래 카드를 누르면 각 프로젝트의 상세 내용이 열립니다.</p>
     </div>
     <div class="contact">
       <button class="cbtn" id="cbtn" aria-expanded="false" aria-controls="pop">
@@ -170,6 +180,7 @@ code{font-family:var(--mono);font-size:.86em;background:var(--bg);border:1px sol
       </div>
     </div>
   </div>
+  <div class="wrap"><div class="hline"><span>PROJECTS <b>04</b></span></div></div>
 </header>
 
 <main>
