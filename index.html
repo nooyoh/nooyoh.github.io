@@ -428,7 +428,7 @@ const P = [
   gh:"https://github.com/nooyoh/Robotic_Arm",
   role:["송신부(센서 STM32) 펌웨어 구현 및 디버깅 — 각도 수집, 패킷 생성, RTT 측정","웹 대시보드 코드 통합"],
   s1:`<ul class="pts">
-      <li>착용형 센서 7개로 어깨·팔꿈치 각도와 손가락 상태 측정</li>
+      <li>착용형 센서(절대형 엔코더, 가변 저항, 스위치) 7개로 어깨·팔꿈치 각도와 손가락 상태 측정</li>
       <li>송신 STM32 → ESP32 → PC → 수신 STM32 무선 파이프라인 구성</li>
       <li>서보 7개(팔 3축 + 손가락 4)로 사용자 동작을 실시간 모방</li>
       <li>송신 MCU 기준 RTT 측정으로 전 구간 지연을 수치로 검증</li></ul>
@@ -442,27 +442,29 @@ const P = [
       <li>각도를 0.1° 단위 정수로 변환해 float 대비 패킷 크기 축소</li>
       <li>ESP32·PC·수신부 모두 헤더 동기화 상태머신으로 프레임 복구</li></ul>
     <h4><span class="m">2-2</span>Timer Input Capture 기반 절대형 엔코더 각도 측정</h4>
-    <ul class="pts"><li>TIM2/TIM3 PWM Input 모드로 주기·펄스폭을 1µs 단위로 캡처</li>
+    <ul class="pts"><li>TIM PWM Input 모드로 주기·펄스폭을 1µs 단위로 캡처</li>
       <li>유효 펄스 구간(260µs ~ 8.86ms)을 0~360°로 선형 매핑</li>
       <li>가변저항은 12bit ADC 값을 0~300°로 변환</li></ul>
     <h4><span class="m">2-3</span>영점 보정 및 손가락 접촉 감지</h4>
-    <ul class="pts"><li>B1 버튼 입력 시점 각도를 오프셋으로 저장 → 상대각 산출</li>
+    <ul class="pts"><li>B1 버튼 입력 시점 각도를 오프셋으로 저장하여 상대각 산출</li>
       <li>±180° 경계 래핑 처리로 각도 점프 방지</li>
       <li>손가락 4채널 동시 샘플링 + 다수결 디바운싱으로 접촉 판정</li></ul>`,
-  s3:`<div class="issue"><div class="q"><span class="tag">ISSUE 01</span><p>휨센서 5개 전량 불량</p></div>
+  s3:`<div class="issue"><div class="q"><span class="tag">ISSUE 01</span><p>짧은 길이의 휨센서</p></div>
       <div class="a"><span class="tag">FIX</span><ul class="pts">
-      <li>손가락 끝 전선 + 손바닥 호일 접지면으로 접촉식 스위치 구성</li>
+      <li>짧은 길이로 인해 반응점 50g에 도달하지 않아 측정되지 않음</li>
+      <li>손가락 끝 전선 + 손바닥 호일 접지면으로 <strong>접촉식 스위치</strong> 구성</li>
       <li>주먹을 쥐면 회로가 닫혀 손가락별 개별·다중 인식 가능</li>
-      <li>접점 채터링은 다수결 디바운싱으로 처리하고, 샘플을 10→3회로 줄여 지연 최소화</li></ul></div></div>
-    <div class="issue"><div class="q"><span class="tag">ISSUE 02</span><p>엔코더 1개 IC 열 손상</p></div>
-      <div class="a"><span class="tag">FIX</span><ul class="pts">
-      <li>가변저항(ADC)으로 대체, 센서별 범위 차이는 영점 오프셋으로 통일</li>
-      <li>패킷 규격을 유지해 수신부·PC 코드 수정 없이 교체</li></ul></div></div>
-    <div class="issue"><div class="q"><span class="tag">ISSUE 03</span><p>지연 측정 구간의 한계 — 측정값과 체감 지연의 불일치</p></div>
+      <li>접점 채터링 → 다수결 디바운싱, 샘플 10→3회로 줄여 지연 최소화</li></ul></div></div>
+    <div class="issue"><div class="q"><span class="tag">ISSUE 02</span><p>지연 측정 구간의 한계</p></div>
       <div class="a"><span class="tag">FIX</span><ul class="pts">
       <li>기존 측정은 PC 내부 처리 구간만 반영해 체감 지연과 불일치</li>
-      <li>ESP32 TX(GPIO17) 역방향 경로를 추가하고 <strong>ACK 기반 RTT 측정 구조</strong>로 변경</li>
-      <li>ACK 대기 80ms 타임아웃으로 송신 루프 블로킹 방지</li></ul></div></div>`,
+      <li><strong>ACK 기반 RTT 구조</strong>로 변경하여 파이프라인의 각 구간을 측정</li>
+      <li>PC 중계 프로그램이 송·수신을 순차 처리하여 지연 발생</li>
+      <li>별도 프로세스로 분리하여 공유 메모리로 연결 → <strong>편도 지연을 26ms에서 7.5ms로 단축</strong></li></ul></div></div>
+    <div class="issue"><div class="q"><span class="tag">ISSUE 03</span><p>엔코더 1개 IC 열 손상</p></div>
+      <div class="a"><span class="tag">FIX</span><ul class="pts">
+      <li>가변저항(ADC)으로 대체, 센서별 범위 차이는 영점 오프셋으로 통일</li>
+      <li>패킷 규격을 유지해 수신부·PC 코드 수정 없이 교체</li></ul></div></div>`,
   s4:`<h4><span class="m">4-1</span>결과</h4>
     <div class="result"><div><b>7.5ms</b><small>E2E 지연 (실측)</small></div><div><b>15ms</b><small>RTT</small></div><div><b>~35Hz</b><small>전송률</small></div></div>
     <ul class="pts"><li>어깨·팔꿈치 3축 + 손가락 4개 동작 실시간 모방 시연 완료</li></ul>
@@ -470,48 +472,54 @@ const P = [
     <div class="note"><b>계층 간 프로토콜 설계의 중요성</b><p>MCU·무선 모듈·PC가 같은 패킷 규격과 동기화 로직을 공유해야 통합 단계의 디버깅 범위를 줄일 수 있음을 체감했습니다.</p></div>`
 },
 {
-  id:"thermal-sr", no:"P/02", cover:"thermal",
-  title:"RGB–열화상 융합 기반 고해상도 열화상 복원 및 객체 탐지 향상 시스템",
+  id:"silo-robot", no:"P/02", cover:"silo",
+  title:"가변자력 기반의 곡면 적응형 궤도를 활용한 철제 구조물 안전 점검 로봇",
   team:"팀 프로젝트 (5인)", period:"2026.03 – 2026.10",
-  sum:"고해상도 가시광(VIS) 영상을 가이드로 저해상도 열화상(80×60)을 ×8 복원하고, 교차 모달 후처리로 YOLO 객체 탐지 성능을 향상시킨 시스템.",
-  skills:["Python","PyTorch","OpenCV","U-Net","YOLO11n","FastAPI"],
-  gh:"https://github.com/nooyoh/Thermal-Super-Resolution-SRT",
-  role:["팀장 — 일정·산출물 관리, 경진대회 발표","데이터셋 준비, 평가 체계 설계, 후처리 23종 비교 실험"],
+  sum:"가변 자력으로 철제 벽면에 부착·주행하며 YOLO로 균열·부식을 탐지하고, 거리센서·IMU 복합 판정으로 이탈 위험 시 모터 출력을 차단하는 점검 로봇.",
+  skills:["C","Python","STM32 F401RE","Jetson Orin Nano","YOLOv8","TensorRT","ONNX","ROS2"],
+  gh:"https://github.com/nooyoh/Silo_Robot",
+  role:["안전 판정 — 거리센서 3점·IMU 기반 밀착 불균형·벽면 이탈 위험 판정 로직 설계","AI 결함 탐지 — 데이터셋 구축, YOLOv8s 학습, Orin 추론 구현"],
   s1:`<ul class="pts">
-      <li>보급형 열화상 센서의 저해상도 한계를 추가 하드웨어 없이 SW로 보완</li>
-      <li>VIS 가이드 초해상화(Dual-Encoder U-Net)로 열화상 ×8 복원</li>
-      <li>VIS 구조를 주입하는 교차 모달 후처리(SGF)로 탐지 성능 향상</li>
-      <li>업로드 → 복원 → 후처리 → 탐지까지 End-to-End 시스템 구현</li></ul>
+      <li>가변 자력 부착 + 곡률 적응형 궤도로 철제 사일로의 평면·곡면 벽면을 주행하는 점검 로봇</li>
+      <li>CSI 카메라 영상 RTSP 송출 → Orin에서 균열·부식 세그멘테이션 → 관제 콘솔 표시·기록</li>
+      <li>STM32(모터·안전 정지) / Nano B01(센서 융합·통신) / Orin(AI) / RPi4(관제) 역할 분리</li>
+      <li>거리센서 3점·IMU 복합 판정으로 벽면 이탈 위험 시 경로 정지 및 모터 출력 차단</li></ul>
     <div class="kv">
-      <div class="k">수행 목표</div><div class="v">VIS 영상을 가이드로 저해상도 열화상(80×60)을 ×8 복원 / 복원 영상 후처리로 YOLO11n 객체 탐지 성능(mAP)을 정량적으로 향상</div>
-      <div class="k">언어</div><div class="v">Python</div>
-      <div class="k">Library</div><div class="v">PyTorch, OpenCV, Ultralytics YOLO11n, FastAPI</div>
-      <div class="k">Tool</div><div class="v">VS Code, TensorBoard, Google Colab</div></div>`,
-  s2:`<h4><span class="m">2-1</span>CoReFusion 기반 Dual-Encoder U-Net 복원 모델</h4>
-    <ul class="pts"><li>VIS·열화상 각각 ImageNet 사전학습 ResNet34 인코더로 특징 추출</li>
-      <li>5단계 특징을 element-wise max로 융합 → 경계·열원 중 강한 응답 보존</li>
-      <li>대조 학습으로 같은 장면의 VIS·IR 임베딩을 정렬</li>
-      <li>L1·L2·SSIM·PSNR 복합 손실 + β 탐색(0.3 / 0.5 / 0.7) → β 0.3 채택</li></ul>
-    <h4><span class="m">2-2</span>Saliency-Guided Fusion(SGF) 후처리 설계</h4>
-    <ul class="pts"><li>Guided Filter로 열화상·VIS를 base(톤) / detail(윤곽) 성분으로 분리</li>
-      <li>Saliency map으로 열원 검출 → 열원은 열화상 유지, 배경은 VIS로 보강</li>
-      <li>더 선명한 쪽의 detail 선택 후 CLAHE로 대비 강화</li></ul>`,
-  s3:`<div class="issue"><div class="q"><span class="tag">ISSUE 01</span><p>Pseudo-label 평가의 구조적 편향</p></div>
+      <div class="k">수행 목표</div><div class="v">철제 벽면 근접 영상에서 균열·부식을 실시간 탐지해 점검 기록과 연계 / 벽면·천장·곡면 자세와 무관하게 이탈 위험을 판정해 모터 출력 차단</div>
+      <div class="k">언어</div><div class="v">C, Python</div>
+      <div class="k">Library</div><div class="v">YOLOv8, TensorRT, ONNX, OpenCV, ROS2</div>
+      <div class="k">Tool</div><div class="v">Google Colab Pro, VS Code, STM32CubeIDE</div>
+      <div class="k">Board</div><div class="v">Jetson Orin Nano Super, Jetson Nano B01, STM32 F401RE</div></div>`,
+  s2:`<h4><span class="m">2-1</span>결함 탐지 데이터셋 재구축 (crack / corrosion 2클래스)</h4>
+    <ul class="pts"><li>공개 데이터 3종(Steelcrack, Roboflow 부식 2종)을 철제 표면 근접 도메인으로 선별</li>
+      <li>균열 마스크 PNG → <code>findContours</code>·<code>approxPolyDP</code>로 YOLO 폴리곤 라벨 변환</li>
+      <li>클래스 remap 후 병합: 총 10,267장 (train 8,506 / val 1,000 / test 761)</li></ul>
+    <h4><span class="m">2-2</span>YOLOv8s-seg 학습 및 Orin 배포</h4>
+    <ul class="pts"><li>Colab Pro 100 epoch 학습</li>
+      <li><code>best.pt</code> → ONNX 출력 일치 검증 후 Orin에서 FP16 TensorRT 엔진 빌드</li>
+      <li>RTSP 수신 → 추론 → 마스크 폴리곤·클래스·신뢰도만 WebSocket 전송, JSONL 기록</li></ul>
+    <h4><span class="m">2-3</span>자세 독립형 이탈 위험 판정</h4>
+    <ul class="pts"><li>거리 3점의 평균(간격)·편차(한쪽 들림)·변화율(이격 속도)을 특징량으로 산출</li>
+      <li>IMU는 절대 Roll·Pitch 대신 각속도 크기·단시간 자세 변화량으로 판단</li>
+      <li>NORMAL / WARNING / STOPPED / OFFLINE 4상태 머신, 정지 후 수동 해제 전까지 래치</li></ul>`,
+  s3:`<div class="issue"><div class="q"><span class="tag">ISSUE 01</span><p>곡면 주행 중 이탈로 오판정되어 Fail-safe 작동</p></div>
       <div class="a"><span class="tag">FIX</span><ul class="pts">
-      <li>VIS 기반 YOLO 라벨과 열화상 라벨의 일치도 F1 0.46, 사람 대거 누락 확인</li>
-      <li>원본 HR 열화상 위에서 <strong>GT 직접 라벨링</strong> (주간 200장 + 야간 49장)</li>
-      <li>SR 영상이 정답 생성에 개입하는 순환 오염 차단</li></ul></div></div>
-    <div class="issue"><div class="q"><span class="tag">ISSUE 02</span><p>처음 채택한 후처리(CLAHE)의 효과 소멸</p></div>
+      <li>UART 로그 분석 : 곡면 진입 시 절대 Roll·Pitch 임계 초과</li>
+      <li>곡률로 인해 밀착 상태에서도 양 끝 센서 거리가 중앙보다 최대 6mm 증가</li>
+      <li>절대 자세각은 표시용으로만 사용, 거리 편차는 절대값 대신 <strong>변화율</strong>로 판정</li>
+      <li>거리·IMU 이상이 <strong>동시에 200ms 지속</strong>될 때만 정지하도록 복합 조건화</li></ul></div></div>
+    <div class="issue"><div class="q"><span class="tag">ISSUE 02</span><p>1차 탐지 모델 mAP50 0.115로 실사용 불가</p></div>
       <div class="a"><span class="tag">FIX</span><ul class="pts">
-      <li>GT 재평가 결과 CLAHE mAP@0.5 0.114로 baseline과 동일, 개선 없음</li>
-      <li>기존 16종 + VIS 가이드 7종, <strong>총 23종을 동일 조건으로 재비교</strong></li>
-      <li>상위 4개가 모두 VIS 가이드 기법 → 교차 모달 방식의 일관된 효과 확인</li></ul></div></div>`,
+      <li>원본 라벨 JSON 직접 분석 → 결함 세부유형 필드 부재, 건물 도메인 혼재 확인</li>
+      <li>단일 클래스 bbox에서 <strong>균열·부식 2클래스 세그멘테이션으로 재설계</strong></li>
+      <li>철제 표면 데이터로 재구축 후 Mask mAP50 0.580 (crack 0.755) 달성</li></ul></div></div>`,
   s4:`<h4><span class="m">4-1</span>결과</h4>
-    <div class="result"><div><b>+1.95dB</b><small>PSNR (vs Bicubic)</small></div><div><b>+0.020</b><small>SSIM (vs Bicubic)</small></div><div><b>0.114→0.466</b><small>주간 mAP@0.5</small></div><div><b>0.149→0.438</b><small>야간 mAP@0.5</small></div></div>
-    <ul class="pts"><li>복원: 검증 200장 중 199장에서 Bicubic 대비 우세</li>
-      <li>탐지: SGF 적용 시 주간 mAP@0.5 약 4배 향상</li></ul>
+    <div class="result"><div><b>0.580</b><small>Mask mAP50 (2클래스)</small></div><div><b>0.755</b><small>crack AP50</small></div><div><b>0.115</b><small>1차 bbox 모델 mAP50</small></div></div>
+    <ul class="pts"><li>균열·부식 2클래스 Mask mAP50 0.580, crack AP50 0.755 (1차 bbox 모델 0.115)</li>
+      <li>Orin TensorRT 실추론 + RPi4 관제 화면 실시간 영상 위에 탐지 결과 표시</li></ul>
     <h4><span class="m">4-2</span>고찰</h4>
-    <div class="note"><b>객관적인 정답 라벨로 신뢰성 있는 평가 지표 확보</b><p>라벨 편향을 바로잡자 기존에 채택했던 후처리의 효과가 미비하다는 것이 드러났고, 이를 근거로 더 나은 후처리(SGF)를 찾을 수 있었습니다.</p></div>`
+    <div class="note"><b>안전 판정은 다중 근거로</b><p>단일 센서·절대 임계값은 주행 환경이 바뀌면 오판정하므로, 여러 근거가 일치할 때만 정지하는 구조가 필요함을 확인했습니다.</p></div>
+    <div class="note"><b>모델 성능은 데이터 구조에서 결정됨</b><p>파라미터 조정보다 라벨 구조·도메인 검증이 먼저임을 1차 모델 실패 분석으로 체감했습니다.</p></div>`
 },
 {
   id:"linux-driver", no:"P/03", cover:"driver",
@@ -550,70 +558,21 @@ const P = [
       <li>배선 변경 시 드라이버 재컴파일 없이 DT 수정만으로 대응</li></ul>`,
   s3:`<div class="issue"><div class="q"><span class="tag">ISSUE 01</span><p>엔코더 S1·S2 신호 미검출</p></div>
       <div class="a"><span class="tag">FIX</span><ul class="pts">
-      <li>10kΩ 풀업이 약해 NPN 반전단의 HIGH 레벨이 확보되지 않음</li>
-      <li>풀업 저항을 <strong>330Ω으로 교체</strong>해 회전 신호 정상 인식</li></ul></div></div>
+      <li>10kΩ 풀업 저항과 내부 저항으로 인해 핀 전압이 약 1.9V에 도달</li>
+      <li>젯슨 보드 내 TXB0108 HIGH 입력 기준인 2.1V에 못 미쳐서 신호가 LOW로 입력</li>
+      <li>풀업 저항을 <strong>330Ω으로 교체</strong>했더니 3.2V가 입력되어 회전 신호 정상 인식</li></ul></div></div>
     <div class="issue"><div class="q"><span class="tag">ISSUE 02</span><p>온도 경계에서 LED 바 깜빡임</p></div>
-      <div class="a"><span class="tag">FIX</span><ul class="pts"><li>±0.2℃ 히스테리시스를 적용해 떨림 제거</li></ul></div></div>`,
+      <div class="a"><span class="tag">FIX</span><ul class="pts"><li>±0.2℃ 히스테리시스로 떨림 제거</li></ul></div></div>`,
   s4:`<h4><span class="m">4-1</span>결과</h4>
     <div class="result"><div><b>4종</b><small>커널 드라이버 구현</small></div><div><b>3모드</b><small>WAIT · AUTO · MANUAL 통합 동작</small></div></div>
     <ul class="pts"><li>앱은 IIO · ioctl · poll 표준 인터페이스로만 하드웨어에 접근</li>
       <li>드라이버별 단독 테스트 앱(<code>ec11_test</code>, <code>ledbar_test</code> 등)으로 분리 검증 후 통합</li></ul>
     <h4><span class="m">4-2</span>고찰</h4>
-    <div class="note"><b>실행 문맥에 맞는 동기화 선택</b><p>ISR·타이머·read()가 같은 큐를 공유하므로, sleep할 수 없는 문맥에서는 mutex가 아닌 spinlock_irqsave가 필요함을 직접 구현하며 체감했습니다.</p></div>
+    <div class="note"><b>실행 문맥에 맞는 동기화 선택</b><p>ISR·타이머·read()가 같은 큐를 공유하므로, sleep할 수 없는 문맥에서는 mutex가 아닌 spinlock이 필요함을 직접 구현하며 체감했습니다.</p></div>
     <div class="note"><b>정책과 메커니즘의 분리</b><p>드라이버는 표준 인터페이스만 제공하고 제어 정책은 앱에 두어, 드라이버 수정 없이 앱만 바꿔 동작을 변경할 수 있는 구조의 이점을 확인했습니다.</p></div>`
 },
 {
-  id:"silo-robot", no:"P/04", cover:"silo",
-  title:"가변자력 기반의 곡면 적응형 궤도를 활용한 철제 구조물 안전 점검 로봇",
-  team:"팀 프로젝트 (5인)", period:"2026.03 – 2026.10",
-  sum:"가변 자력으로 철제 벽면에 부착·주행하며 YOLO로 균열·부식을 탐지하고, 거리센서·IMU 복합 판정으로 이탈 위험 시 모터 출력을 차단하는 점검 로봇.",
-  skills:["C","Python","STM32 F401RE","Jetson Orin Nano","YOLOv8","TensorRT","ONNX","ROS2"],
-  gh:"https://github.com/nooyoh/Silo_Robot",
-  role:["AI 결함 탐지 — 데이터셋 구축, YOLOv8s 학습, Orin 추론 구현","안전 판정 — 거리센서 3점·IMU 기반 밀착 불균형·벽면 이탈 위험 판정 로직 설계"],
-  s1:`<ul class="pts">
-      <li>가변 자력 부착 + 곡률 적응형 궤도로 철제 사일로의 평면·곡면 벽면을 주행하는 점검 로봇</li>
-      <li>CSI 카메라 영상 RTSP 송출 → Orin에서 균열·부식 세그멘테이션 → 관제 콘솔 표시·기록</li>
-      <li>STM32(모터·안전 정지) / Nano B01(센서 융합·통신) / Orin(AI) / RPi4(관제) 역할 분리</li>
-      <li>거리센서 3점·IMU 복합 판정으로 벽면 이탈 위험 시 경로 정지 및 모터 출력 차단</li></ul>
-    <div class="kv">
-      <div class="k">수행 목표</div><div class="v">철제 벽면 근접 영상에서 균열·부식을 실시간 탐지해 점검 기록과 연계 / 벽면·천장·곡면 자세와 무관하게 이탈 위험을 판정해 모터 출력 차단</div>
-      <div class="k">언어</div><div class="v">C, Python</div>
-      <div class="k">Library</div><div class="v">YOLOv8, TensorRT, ONNX, OpenCV, ROS2</div>
-      <div class="k">Tool</div><div class="v">Google Colab Pro, VS Code, STM32CubeIDE</div>
-      <div class="k">Board</div><div class="v">Jetson Orin Nano Super, Jetson Nano B01, STM32 F401RE</div></div>`,
-  s2:`<h4><span class="m">2-1</span>결함 탐지 데이터셋 재구축 (crack / corrosion 2클래스)</h4>
-    <ul class="pts"><li>공개 데이터 3종(Steelcrack, Roboflow 부식 2종)을 철제 표면 근접 도메인으로 선별</li>
-      <li>균열 마스크 PNG → <code>findContours</code>·<code>approxPolyDP</code>로 YOLO 폴리곤 라벨 변환</li>
-      <li>클래스 remap 후 병합: 총 10,267장 (train 8,506 / val 1,000 / test 761)</li></ul>
-    <h4><span class="m">2-2</span>YOLOv8s-seg 학습 및 Orin 배포</h4>
-    <ul class="pts"><li>Colab Pro 100 epoch 학습, 세션 끊김 시 <code>last.pt</code> 기반 resume로 이어서 학습</li>
-      <li><code>best.pt</code> → ONNX 출력 일치 검증 후 Orin에서 FP16 TensorRT 엔진 빌드</li>
-      <li>RTSP 수신 → 추론 → 마스크 폴리곤·클래스·신뢰도만 WebSocket 전송, JSONL 기록</li></ul>
-    <h4><span class="m">2-3</span>자세 독립형 이탈 위험 판정</h4>
-    <ul class="pts"><li>거리 3점의 평균(간격)·편차(한쪽 들림)·변화율(이격 속도)을 특징량으로 산출</li>
-      <li>IMU는 절대 Roll·Pitch 대신 각속도 크기·단시간 자세 변화량으로 판단</li>
-      <li>NORMAL / WARNING / STOPPED / OFFLINE 4상태 머신, 정지 후 수동 해제 전까지 래치</li></ul>`,
-  s3:`<div class="issue"><div class="q"><span class="tag">ISSUE 01</span><p>1차 탐지 모델 mAP50 0.115로 실사용 불가</p></div>
-      <div class="a"><span class="tag">FIX</span><ul class="pts">
-      <li>원본 라벨 JSON 직접 분석 → 결함 세부유형 필드 부재, 건물 도메인 혼재 확인</li>
-      <li>단일 클래스 bbox에서 <strong>균열·부식 2클래스 세그멘테이션으로 재설계</strong></li>
-      <li>철제 표면 데이터로 재구축 후 Mask mAP50 0.580 (crack 0.755) 달성</li></ul></div></div>
-    <div class="issue"><div class="q"><span class="tag">ISSUE 02</span><p>정상 곡면 주행 중 이탈로 오판정되어 Fail-safe 작동</p></div>
-      <div class="a"><span class="tag">FIX</span><ul class="pts">
-      <li>UART 로그 분석: 곡면 진입 시 절대 Roll·Pitch가 임계값 초과</li>
-      <li>곡률로 인해 밀착 상태에서도 양 끝 센서 거리가 중앙보다 최대 6mm 증가</li>
-      <li>절대 자세각은 표시용으로만 사용, 거리 편차는 절대값 대신 <strong>변화율</strong>로 판정</li>
-      <li>거리·IMU 이상이 <strong>동시에 200ms 지속</strong>될 때만 정지하도록 복합 조건화</li></ul></div></div>`,
-  s4:`<h4><span class="m">4-1</span>결과</h4>
-    <div class="result"><div><b>0.580</b><small>Mask mAP50 (2클래스)</small></div><div><b>0.755</b><small>crack AP50</small></div><div><b>1회</b><small>곡면 오정지 (감소)</small></div><div><b>20/20</b><small>한쪽 이격 시험 감지</small></div></div>
-    <ul class="pts"><li>1차 bbox 모델(0.115) 대비 탐지 성능 개선</li>
-      <li>Orin TensorRT 실추론 + RPi4 관제 화면 실시간 영상 위에 탐지 결과 표시</li></ul>
-    <h4><span class="m">4-2</span>고찰</h4>
-    <div class="note"><b>모델 성능은 데이터 구조에서 결정됨</b><p>하이퍼파라미터 조정보다 라벨 구조·도메인 검증이 먼저임을 1차 모델 실패 분석으로 체감했습니다.</p></div>
-    <div class="note"><b>안전 판정은 다중 근거로</b><p>단일 센서·절대 임계값은 주행 환경이 바뀌면 오판정하므로, 여러 근거가 일치할 때만 정지하는 구조가 필요함을 확인했습니다.</p></div>`
-},
-{
-  id:"ai-motor", no:"P/05", cover:"motor",
+  id:"ai-motor", no:"P/04", cover:"motor",
   title:"센서 데이터 기반 AI 모터 안전 제어 시스템",
   team:"팀 프로젝트 (4인)", period:"2026.09.02 – 2026.09.16",
   sum:"STM32로 수집한 진동·전류 데이터를 Jetson의 1D-CNN으로 정상·풀림·불균형 3클래스 진단하고, 이상 시 AI와 독립된 AVR 안전 상태기가 릴레이로 모터 전원을 차단하는 시스템.",
@@ -666,6 +625,51 @@ const P = [
     <div class="note"><b>AI는 판단, 정지는 하드웨어</b><p>오검출 가능성이 있는 AI와 별개로 독립 MCU가 차단을 보장해야 안전 구조가 성립합니다.</p></div>`
 },
 {
+  id:"thermal-sr", no:"P/05", cover:"thermal",
+  title:"RGB–열화상 융합 기반 고해상도 열화상 복원 및 객체 탐지 향상 시스템",
+  team:"팀 프로젝트 (5인)", period:"2026.03 – 2026.10",
+  sum:"고해상도 가시광(VIS) 영상을 가이드로 저해상도 열화상(80×60)을 ×8 복원하고, 교차 모달 후처리로 YOLO 객체 탐지 성능을 향상시킨 시스템.",
+  skills:["Python","PyTorch","OpenCV","U-Net","YOLO11n","FastAPI"],
+  gh:"https://github.com/nooyoh/Thermal-Super-Resolution-SRT",
+  role:["팀장 — 일정·산출물 관리, 경진대회 발표","데이터셋 준비, 평가 체계 설계, 후처리 23종 비교 실험"],
+  s1:`<ul class="pts">
+      <li>보급형 열화상 센서의 저해상도 한계를 추가 하드웨어 없이 소프트웨어로 보완</li>
+      <li>VIS 가이드 초해상화(Dual-Encoder U-Net)로 열화상 ×8 복원</li>
+      <li>VIS 구조를 주입하는 교차 모달 후처리(Saliency Guided Filter)로 탐지 성능 향상</li>
+      <li>입력 → 복원 → 후처리 → 탐지까지 End-To-End 시스템 구현</li></ul>
+    <div class="kv">
+      <div class="k">수행 목표</div><div class="v">VIS 영상을 가이드로 저해상도 열화상(80×60)을 ×8 복원 / 복원 영상 후처리로 YOLO11n 객체 탐지 성능(mAP)을 정량적으로 향상</div>
+      <div class="k">언어</div><div class="v">Python</div>
+      <div class="k">Library</div><div class="v">PyTorch, OpenCV, Ultralytics YOLO11n, FastAPI</div>
+      <div class="k">Tool</div><div class="v">VS Code, TensorBoard, Google Colab</div></div>`,
+  s2:`<h4><span class="m">2-1</span>CoReFusion 기반 Dual-Encoder U-Net 복원 모델</h4>
+    <ul class="pts"><li>VIS·열화상 각각 ImageNet 사전학습 ResNet34 인코더로 특징 추출</li>
+      <li>5단계 특징을 element-wise max로 융합 → 경계·열원 중 강한 응답 보존</li>
+      <li>대조 학습으로 같은 장면의 VIS·IR 임베딩을 정렬</li>
+      <li>L1·L2·SSIM·PSNR 복합 손실 + β 탐색(0.3 / 0.5 / 0.7) → β 0.3 채택</li>
+      <li><code>L = 0.95·L1 + 0.05·L2 + 0.3·(1−SSIM) + 1.0·(1−PSNR) + β·L<sub>contrastive</sub></code></li></ul>
+    <h4><span class="m">2-2</span>Saliency-Guided Fusion(SGF) 후처리 설계</h4>
+    <ul class="pts"><li>Guided Filter로 열화상·VIS를 base(톤) / detail(윤곽) 성분으로 분리</li>
+      <li>Saliency map으로 열원 검출 → 열원은 열화상 유지, 배경은 VIS로 보강</li>
+      <li>더 선명한 쪽의 detail 선택 후 CLAHE로 대비 강화</li></ul>`,
+  s3:`<div class="issue"><div class="q"><span class="tag">ISSUE 01</span><p>Pseudo-label 평가의 구조적 편향</p></div>
+      <div class="a"><span class="tag">FIX</span><ul class="pts">
+      <li>VIS 기반 YOLO 라벨과 열화상 라벨의 일치도 F1 0.46, 사람 대거 누락 확인</li>
+      <li>원본 HR 열화상 위에서 <strong>GT 직접 라벨링</strong> (주간 200장 + 야간 49장)</li>
+      <li>SR 영상이 정답 생성에 개입하는 순환 오염 차단</li></ul></div></div>
+    <div class="issue"><div class="q"><span class="tag">ISSUE 02</span><p>처음 채택한 후처리(CLAHE)의 효과 소멸</p></div>
+      <div class="a"><span class="tag">FIX</span><ul class="pts">
+      <li>GT 재평가 결과 CLAHE mAP@0.5 0.114로 baseline과 동일, 개선 없음</li>
+      <li>기존 16종 + VIS 가이드 7종, <strong>총 23종을 동일 조건으로 재비교</strong></li>
+      <li>상위 4개가 모두 VIS 가이드 기법 → 교차 모달 방식의 일관된 효과 확인</li></ul></div></div>`,
+  s4:`<h4><span class="m">4-1</span>결과</h4>
+    <div class="result"><div><b>+1.95dB</b><small>PSNR (vs Bicubic)</small></div><div><b>+0.020</b><small>SSIM (vs Bicubic)</small></div><div><b>0.114→0.466</b><small>주간 mAP@0.5</small></div><div><b>0.149→0.438</b><small>야간 mAP@0.5</small></div></div>
+    <ul class="pts"><li>복원: 검증 200장 중 199장에서 Bicubic 대비 우세</li>
+      <li>탐지: SGF 적용 시 주간 mAP@0.5 약 4배 향상</li></ul>
+    <h4><span class="m">4-2</span>고찰</h4>
+    <div class="note"><b>객관적인 정답 라벨을 확보하여 신뢰성 있는 평가 지표를 얻음</b><p>라벨 편향을 바로잡자 기존에 채택했던 후처리의 효과가 미비하였고, 이를 근거로 더 나은 후처리(SGF)를 찾을 수 있었습니다.</p></div>`
+},
+{
   id:"i2c-monitor", no:"P/06", cover:"i2c",
   title:"I2C Sensor Monitor",
   team:"팀 프로젝트 (2인)", period:"2026.11.03 – 2026.11.06",
@@ -696,8 +700,8 @@ const P = [
       <li><code>oled_text</code> : 5×7 폰트를 세로 8 pixel column byte로 변환해 128×4 page 화면 생성</li></ul>`,
   s3:`<div class="issue"><div class="q"><span class="tag">ISSUE 01</span><p>센서 읽기와 OLED 출력의 I2C 버스 충돌</p></div>
       <div class="a"><span class="tag">FIX</span><ul class="pts">
-      <li>두 모듈이 같은 <code>i2c_master</code>를 동시에 사용하려 해 통신 충돌 발생</li>
-      <li><strong><code>i2c_arbiter</code> 설계</strong> : 버스가 비었을 때만 grant, 동시 요청 시 센서 읽기 우선</li>
+      <li>두 SLAVE 모듈이 같은 MASTER를 동시에 사용하려 해 통신 충돌 발생</li>
+      <li><strong>I2C 중개기 설계</strong> : 버스가 비었을 때만 grant, 동시 요청 시 센서 읽기 우선</li>
       <li>OLED는 512 byte를 끊김 없이 점유(약 47ms), 센서는 대기해도 0.2초 주기 내 완료</li></ul></div></div>
     <div class="issue"><div class="q"><span class="tag">ISSUE 02</span><p>첫 센서 읽기 이후 I2C 버스 정지 (이후 계속 NACK)</p></div>
       <div class="a"><span class="tag">FIX</span><ul class="pts">
